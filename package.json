@@ -1,0 +1,16 @@
+{
+  "name": "gigio-flow",
+  "version": "0.1.0",
+  "description": "Open-source workspace protocol and local Studio for Codex-powered AI squads",
+  "private": true,
+  "scripts": {
+    "studio": "cd dashboard && npm run dev",
+    "install:all": "cd dashboard && npm install",
+    "test": "cd dashboard && npm test",
+    "lint": "cd dashboard && npm run lint",
+    "build": "cd dashboard && npm run build"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
