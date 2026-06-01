@@ -1,5 +1,5 @@
-# Pasta de Tarefas Em Progresso (Active Sprint)
+# In-Progress Tasks Folder (Active Sprint)
 
-Esta pasta reúne as tarefas locais que estão sendo codificadas e validadas ativamente no momento pelos squads de IA.
+This folder gathers the local tasks that are currently being actively coded and validated by the AI squads.
 
-- **Regra de Handoff:** Assim que o Dev concluir a codificação e o QA validar com sucesso, este arquivo markdown é movido para `.ai/history/concluidos/` juntamente com o log de commits e evidências do teste.
+- **Handoff Rule:** As soon as the Dev finishes coding and QA validates successfully, this markdown file is moved to `.ai/history/concluidos/` along with the commit log and test evidence.

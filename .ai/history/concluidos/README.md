@@ -1,3 +1,3 @@
-# Histórico de Tarefas Concluídas
+# Completed Tasks History
 
-Esta pasta arquiva todas as tarefas concluídas e homologadas com sucesso pela IA. Cada arquivo de tarefa aqui funciona como um memorial detalhado da evolução do código, contendo o log de commits, a data de encerramento e o relatório final de testes do QA Agent.
+This folder archives all tasks that have been successfully completed and accepted by the AI. Each task file here serves as a detailed record of the code's evolution, containing the commit log, the completion date, and the final QA Agent test report.

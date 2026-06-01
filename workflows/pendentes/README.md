@@ -1,5 +1,5 @@
-# Pasta de Tarefas Pendentes (Backlog)
+# Pending Tasks Folder (Backlog)
 
-Esta pasta reúne as tarefas individuais e atômicas de desenvolvimento que foram fatiadas pela IA, aprovadas pelo fundador e estão prontas para serem implementadas pelo **Dev Agent**.
+This folder gathers the individual and atomic development tasks that have been sliced by the AI, approved by the founder, and are ready to be implemented by the **Dev Agent**.
 
-- **Regra de Execução:** Quando o usuário diz *"execute os comandos pendentes"* ou *"o que tem para fazer?"*, a IA deve ler esta pasta, escolher a tarefa mais prioritária e movê-la para a pasta `workflows/em-progresso/` antes de iniciar a codificação dos arquivos.
+- **Execution Rule:** When the user says *"execute the pending tasks"* or *"what is there to do?"*, the AI should read this folder, choose the highest-priority task, and move it to the `workflows/em-progresso/` folder before starting to code the files.

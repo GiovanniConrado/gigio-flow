@@ -1,49 +1,49 @@
-# Padrões de Release e Deploy (Deploy Standards) — {{NOME_DO_PROJETO}}
+# Release and Deploy Standards — {{NOME_DO_PROJETO}}
 
-> Estas regras são imutáveis e de cumprimento obrigatório para QUALQUER squad, agente de IA ou desenvolvedor humano que interaja com este repositório.
-
----
-
-## 🚀 1. Filosofia de Entrega Incremental e Atômica (Atomic Releases)
-
-Para garantir que o produto esteja sempre em estado estável e implantável:
--   **Commits Pequenos e Focados:** Evite commits gigantescos contendo dezenas de alterações não relacionadas. Cada commit deve representar uma alteração lógica única e atômica.
--   **Trabalho por Branches Atômicas:** Todo desenvolvimento deve ser feito em branches específicas de feature/bug (ex: `feature/nome-recurso` ou `bug/correcao-fluxo`).
--   **Mesclagem via Pull Request (PR):** É expressamente proibido fazer commits diretos na branch principal (`main`/`master`) em produção. Todas as alterações devem passar por Pull Requests validados pelo QA Agent e aprovados pelo fundador.
+> These rules are immutable and mandatory for ANY squad, AI agent, or human developer interacting with this repository.
 
 ---
 
-## 🧪 2. Testes Estáticos e de Linters Obrigatórios (Pre-Release Validation)
+## 🚀 1. Incremental and Atomic Delivery Philosophy (Atomic Releases)
 
-Antes de abrir qualquer Pull Request ou enviar a tarefa para o QA:
--   **Checagem de Tipos Estáticos:** O Dev Agent deve rodar obrigatoriamente a verificação de compilação estática do compilador correspondente à stack em uso (ex: `npm run tsc -- --noEmit`).
--   **Execução do Linter:** O código deve estar livre de avisos e erros de estilo do linter oficial do projeto (ex: ESLint, Prettier):
+To ensure the product is always in a stable and deployable state:
+-   **Small, Focused Commits:** Avoid massive commits containing dozens of unrelated changes. Each commit must represent a single, atomic logical change.
+-   **Work on Atomic Branches:** All development must be done on specific feature/bug branches (e.g., `feature/feature-name` or `bug/flow-fix`).
+-   **Merging via Pull Request (PR):** Direct commits to the main branch (`main`/`master`) in production are expressly forbidden. All changes must go through Pull Requests validated by the QA Agent and approved by the founder.
+
+---
+
+## 🧪 2. Mandatory Static Tests and Linters (Pre-Release Validation)
+
+Before opening any Pull Request or sending the task to QA:
+-   **Static Type Checking:** The Dev Agent must mandatorily run the static compilation check for the compiler corresponding to the stack in use (e.g., `npm run tsc -- --noEmit`).
+-   **Linter Execution:** The code must be free of warnings and style errors from the project's official linter (e.g., ESLint, Prettier):
     ```bash
     npm run lint
     ```
--   **Execução de Testes Unitários/Integração:** Se o projeto possuir suíte de testes automatizados (Jest, Vitest, Cypress), todos os testes devem rodar com 100% de sucesso localmente:
+-   **Unit/Integration Test Execution:** If the project has an automated test suite (Jest, Vitest, Cypress), all tests must run with 100% success locally:
     ```bash
     npm run test
     ```
-    Qualquer falha de teste unitário bloqueia imediatamente a entrega.
+    Any unit test failure immediately blocks the delivery.
 
 ---
 
-## 🛡️ 3. Protocolo de Deploy em Ambientes (Deploy Pipeline)
+## 🛡️ 3. Environment Deploy Protocol (Deploy Pipeline)
 
-O ciclo de vida do código deve respeitar rigorosamente os seguintes ambientes:
+The code lifecycle must rigorously respect the following environments:
 
-1.  **Desenvolvimento / Local:** Onde o Dev Agent codifica e roda os testes iniciais.
-2.  **Staging / Homologação:** Ambiente idêntico ao de produção onde o QA Agent realiza testes manuais complexos, valida layouts em múltiplos dispositivos e simula conexões.
-3.  **Produção (Live):** O ambiente real dos clientes. O deploy em produção só ocorre após o "OK" formal do fundador no ambiente de Staging.
+1.  **Development / Local:** Where the Dev Agent codes and runs initial tests.
+2.  **Staging / UAT:** An environment identical to production where the QA Agent performs complex manual tests, validates layouts on multiple devices, and simulates connections.
+3.  **Production (Live):** The real customer environment. Deployment to production only occurs after the founder's formal "OK" in the Staging environment.
 
 ---
 
-## 🔄 4. Estratégia de Rollback (Feature Toggles e Reversão)
+## 🔄 4. Rollback Strategy (Feature Toggles and Reversion)
 
--   **Feature Flags / Toggles:** Para funcionalidades complexas ou de alto risco, implemente travas de feature flags para que o novo código possa ser desativado remotamente no backend sem a necessidade de um novo deploy de emergência.
--   **Rollback de Emergência:** Caso um bug crítico passe despercebido e afete os usuários em produção, o CTO Agent e o Dev Agent devem estar preparados para reverter o commit problemático na branch principal em menos de 5 minutos, restaurando a última versão estável conhecida:
+-   **Feature Flags / Toggles:** For complex or high-risk features, implement feature flag locks so that new code can be remotely disabled on the backend without the need for a new emergency deploy.
+-   **Emergency Rollback:** If a critical bug slips through and affects users in production, the CTO Agent and Dev Agent must be prepared to revert the problematic commit on the main branch in less than 5 minutes, restoring the last known stable version:
     ```bash
-    git revert [HASH_DO_COMMIT_DEFEITUOSO]
+    git revert [FAULTY_COMMIT_HASH]
     ```
--   **Post-Mortem:** Toda reversão de emergência exige uma reunião de auditoria liderada pelo Process Analyst para identificar a falha no processo de QA e atualizar as regras de segurança correspondentes.
+-   **Post-Mortem:** Every emergency reversion requires an audit meeting led by the Process Analyst to identify the failure in the QA process and update the corresponding security rules.

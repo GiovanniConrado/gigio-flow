@@ -11,12 +11,14 @@
             "id": "8733ef9da7abaa66",
             "type": "leaf",
             "state": {
-              "type": "image",
+              "type": "markdown",
               "state": {
-                "file": "dashboard/dist/icons.svg"
+                "file": "workflows/em-progresso/refatoracao-backend-modulos.md",
+                "mode": "source",
+                "source": false
               },
-              "icon": "lucide-image",
-              "title": "icons"
+              "icon": "lucide-file",
+              "title": "refatoracao-backend-modulos"
             }
           }
         ]
@@ -92,7 +94,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "dashboard/dist/icons.svg",
+                "file": "workflows/em-progresso/refatoracao-backend-modulos.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +104,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Links inversos para icons"
+              "title": "Links inversos para refatoracao-backend-modulos"
             }
           },
           {
@@ -111,12 +113,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "dashboard/dist/icons.svg",
+                "file": "workflows/em-progresso/refatoracao-backend-modulos.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Links de saída para icons"
+              "title": "Links de saída para refatoracao-backend-modulos"
             }
           },
           {
@@ -154,13 +156,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "dashboard/dist/icons.svg",
+                "file": "workflows/em-progresso/refatoracao-backend-modulos.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Sumário de icons"
+              "title": "Sumário de refatoracao-backend-modulos"
             }
           }
         ]
@@ -183,6 +185,12 @@
   },
   "active": "8733ef9da7abaa66",
   "lastOpenFiles": [
+    "docs/ADDING_NEW_AGENTS.md",
+    "workflows/em-progresso/README.md",
+    "AGENTS.md",
+    "boards/🚀 Lancamento.md",
+    "boards/📱 Produto.md",
+    "dashboard/dist/icons.svg",
     "dashboard/dist/favicon.svg",
     "docs/studio-preview.png",
     "docs/OPENAI_APPLICATION.md",
@@ -190,10 +198,6 @@
     "docs/DEMO_SCRIPT.md",
     "docs/CODEX_WORKFLOWS.md",
     "workflows/em-progresso/refatoracao-backend-modulos.md",
-    "workflows/em-progresso/README.md",
-    "AGENTS.md",
-    "boards/🚀 Lancamento.md",
-    "boards/📱 Produto.md",
     "CLAUDE.md",
     "CODE_OF_CONDUCT.md",
     "CONTRIBUTING.md",

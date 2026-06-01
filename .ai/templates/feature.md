@@ -1,32 +1,32 @@
-# 💻 Feature — [Título da Tarefa]
+# 💻 Feature — [Task Title]
 
-> **Squad Responsável:** [Dev Agent / PM Agent / QA Agent]
-> **Status:** ⏳ Pendente / 🏃 Em Progresso / 🛡️ Em Review / ✅ Concluído
-> **Prioridade:** [Alta / Média / Baixa]
+> **Responsible Squad:** [Dev Agent / PM Agent / QA Agent]
+> **Status:** ⏳ Pending / 🏃 In Progress / 🛡️ In Review / ✅ Done
+> **Priority:** [High / Medium / Low]
 > **Issue ID:** [GIG-XX]
 
 ---
 
-## 🎯 Objetivo da Tarefa
-[Descreva em uma frase qual o objetivo técnico ou funcional desta entrega.]
+## 🎯 Task Objective
+[Describe in one sentence the technical or functional goal of this delivery.]
 
 ---
 
-## 📋 Critérios de Aceitação (Checklist de Conclusão)
-- [ ] **Critério 1:** [Descrição objetiva e testável]
-- [ ] **Critério 2:** [Descrição objetiva e testável]
-- [ ] **Critério 3 (Caso de Borda):** [Descrição objetiva e testável]
+## 📋 Acceptance Criteria (Completion Checklist)
+- [ ] **Criterion 1:** [Objective and testable description]
+- [ ] **Criterion 2:** [Objective and testable description]
+- [ ] **Criterion 3 (Edge Case):** [Objective and testable description]
 
 ---
 
-## 🛠️ Arquivos Envolvidos
-*Mapeamento prévio realizado pelo CTO para evitar desvios de contexto.*
-- `[caminho/do/arquivo1.ext]` (Modificar/Criar)
-- `[caminho/do/arquivo2.ext]` (Modificar)
+## 🛠️ Files Involved
+*Prior mapping carried out by the CTO to avoid context drift.*
+- `[path/to/file1.ext]` (Modify/Create)
+- `[path/to/file2.ext]` (Modify)
 
 ---
 
-## 🛡️ Instruções Específicas de Segurança
-- [ ] Nenhuma credencial exposta.
-- [ ] Tipagem TypeScript 100% perfeita sem uso de `any`.
-- [ ] Estilos visuais importados estritamente do Design System.
+## 🛡️ Specific Security Instructions
+- [ ] No credentials exposed.
+- [ ] 100% perfect TypeScript typing without use of `any`.
+- [ ] Visual styles imported strictly from the Design System.

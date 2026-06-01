@@ -1,142 +1,142 @@
-# Arquitetura Técnica do Sistema — Gigio Flow
+# System Technical Architecture — Gigio Flow
 
-> Este arquivo é o manual técnico oficial da infraestrutura. O CTO Agent e o Dev Agent o consultam e o mantêm atualizado a cada evolução na stack.
+> This file is the official technical manual of the infrastructure. The CTO Agent and Dev Agent consult it and keep it updated with every evolution in the stack.
 
 ---
 
-## 🛠️ 1. Visão Geral da Stack Tecnológica
+## 🛠️ 1. Technology Stack Overview
 
-| Camada | Tecnologia Selecionada | Papel no Sistema |
+| Layer | Selected Technology | Role in the System |
 | :--- | :--- | :--- |
-| **Frontend / Cliente** | React 19 + Vite 8 + Lucide Icons | Interface visual do Studio (dashboard) |
-| **Backend / API** | Node.js + Express 5 (ESM) | API REST local que lê/escreve os arquivos Markdown |
-| **Banco de Dados** | Sistema de Arquivos (Markdown) | Toda persistência é feita em arquivos .md locais |
-| **LLM Integration** | Google Gemini 2.5 Flash + OpenAI GPT-4o-mini | Análise estratégica (CEO), refinamento de PRD, estimativa, QA técnico |
-| **Gestão Operacional** | Linear App (via API REST) | Tickets, sprints, kanban operacional pós-aprovação |
-| **Estilo CSS** | CSS Variables (vanilla) | Tokens de design no index.css, sem framework CSS |
+| **Frontend / Client** | React 19 + Vite 8 + Lucide Icons | Visual interface of the Studio (dashboard) |
+| **Backend / API** | Node.js + Express 5 (ESM) | Local REST API that reads/writes Markdown files |
+| **Database** | File System (Markdown) | All persistence is done in local .md files |
+| **LLM Integration** | Google Gemini 2.5 Flash + OpenAI GPT-4o-mini | Strategic analysis (CEO), PRD refinement, estimation, technical QA |
+| **Operational Management** | Linear App (via REST API) | Tickets, sprints, operational kanban post-approval |
+| **CSS Styling** | CSS Variables (vanilla) | Design tokens in index.css, no CSS framework |
 
 ---
 
-## 🌐 2. Fluxo e Integração de Dados
+## 🌐 2. Data Flow and Integration
 
 ```mermaid
 graph TD
     A[Studio Frontend :5173] -->|HTTP REST| B(Studio Backend :3001)
-    B -->|fs.readFileSync| C[(Arquivos Markdown Locais)]
+    B -->|fs.readFileSync| C[(Local Markdown Files)]
     B -->|HTTPS API| D[Gemini 2.5 Flash API]
     B -->|HTTPS API| E[OpenAI GPT-4o-mini API]
     B -->|GraphQL REST| F[Linear API]
     F -->|Webhook POST| B
     B -->|fs.writeFileSync| C
-    G[Claude Code / Cursor] -->|Lê diretamente| C
+    G[Claude Code / Cursor] -->|Reads directly| C
 ```
 
 ---
 
-## 🔒 3. Políticas de Segurança e Controle de Acesso
+## 🔒 3. Security Policies and Access Control
 
--   **Autenticação:** O Studio é uma ferramenta local. O servidor Express roda apenas no localhost. CORS restrito às origens `:5173` e `:3000`.
--   **API Keys LLM:** Passadas pelo frontend para o backend apenas durante chamadas on-demand. O backend NUNCA as persiste — ficam no `localStorage` do navegador.
--   **Chaves Linear:** Configuradas via painel de Integrações e salvas em `dashboard/linear-config.json` (local, fora do workspace de projetos).
--   **Segurança de Arquivos:** Todas as operações de I/O validam o path com `validatePath(baseDir, targetPath)` para prevenir Path Traversal attacks. O path resolvido deve sempre estar dentro do `activeWorkspaceDir`.
--   **Rate Limiting:** Rotas que chamam LLMs externas têm limite de 10 requisições/minuto via `express-rate-limit`.
+-   **Authentication:** The Studio is a local tool. The Express server runs only on localhost. CORS restricted to origins `:5173` and `:3000`.
+-   **LLM API Keys:** Passed from frontend to backend only during on-demand calls. The backend NEVER persists them — they are stored in the browser's `localStorage`.
+-   **Linear Keys:** Configured via the Integrations panel and saved in `dashboard/linear-config.json` (local, outside the project workspace).
+-   **File Security:** All I/O operations validate the path with `validatePath(baseDir, targetPath)` to prevent Path Traversal attacks. The resolved path must always be within the `activeWorkspaceDir`.
+-   **Rate Limiting:** Routes that call external LLMs have a limit of 10 requests/minute via `express-rate-limit`.
 
 ---
 
-## 🗂️ 4. Estrutura de Módulos do Backend
+## 🗂️ 4. Backend Module Structure
 
 ```
 dashboard/
-├── server.js              ← Orquestrador: dotenv, CORS, rate limit, routers
-├── .env                   ← Variáveis de ambiente (PORT, LINEAR_*)
-├── linear-config.json     ← Config da integração Linear (auto-gerado)
-├── projects.json          ← Lista de workspaces registrados
+├── server.js              ← Orchestrator: dotenv, CORS, rate limit, routers
+├── .env                   ← Environment variables (PORT, LINEAR_*)
+├── linear-config.json     ← Linear integration config (auto-generated)
+├── projects.json          ← List of registered workspaces
 ├── services/
-│   ├── files.js           ← I/O seguro de arquivos (validatePath, read, write)
-│   └── llm.js             ← Connector LLM (callLLM, buildSystemContext)
+│   ├── files.js           ← Secure file I/O (validatePath, read, write)
+│   └── llm.js             ← LLM connector (callLLM, buildSystemContext)
 └── routes/
-    ├── projects.js        ← CRUD de workspaces
-    ├── workflow.js        ← Kanban, pipeline LLM, movimentação de cards
-    ├── system.js          ← Status, diagnóstico, initialize, apply-template
-    └── linear.js          ← Integração Linear (settings, create-issue, webhook)
+    ├── projects.js        ← Workspace CRUD
+    ├── workflow.js        ← Kanban, LLM pipeline, card movement
+    ├── system.js          ← Status, diagnostics, initialize, apply-template
+    └── linear.js          ← Linear integration (settings, create-issue, webhook)
 ```
 
 ---
 
-## 🗂️ 5. Estrutura de Módulos do Frontend
+## 🗂️ 5. Frontend Module Structure
 
 ```
 dashboard/src/
-├── App.jsx                     ← Estado global + roteamento de tabs
-├── main.jsx                    ← Entry point React
+├── App.jsx                     ← Global state + tab routing
+├── main.jsx                    ← React entry point
 ├── index.css                   ← Design tokens (CSS variables)
 ├── hooks/
-│   └── useApi.js               ← Abstrações de fetch
+│   └── useApi.js               ← Fetch abstractions
 └── components/
-    ├── Sidebar.jsx              ← Navegação lateral
-    ├── TopBar.jsx               ← Barra de título + search
-    ├── KanbanBoard.jsx          ← Kanban com drag-and-drop HTML5
-    ├── CreateCardModal.jsx      ← Modal de criação de novo card
-    ├── PipelineView.jsx         ← Visualização step-by-step do pipeline
-    ├── OnboardingWizard.jsx     ← Wizard de configuração inicial
-    ├── SquadOrganogram.jsx      ← Organograma de squads
-    ├── CeoChat.jsx              ← Chat de ideação com CEO Agent
-    ├── RitualsGates.jsx         ← Gates de aprovação e rituais
-    ├── GuideView.jsx            ← Diagnóstico + arquitetura
-    └── LinearSettings.jsx       ← Configuração da integração Linear
+    ├── Sidebar.jsx              ← Side navigation
+    ├── TopBar.jsx               ← Title bar + search
+    ├── KanbanBoard.jsx          ← Kanban with HTML5 drag-and-drop
+    ├── CreateCardModal.jsx      ← New card creation modal
+    ├── PipelineView.jsx         ← Step-by-step pipeline visualization
+    ├── OnboardingWizard.jsx     ← Initial configuration wizard
+    ├── SquadOrganogram.jsx      ← Squad organizational chart
+    ├── CeoChat.jsx              ← Ideation chat with CEO Agent
+    ├── RitualsGates.jsx         ← Approval gates and rituals
+    ├── GuideView.jsx            ← Diagnostics + architecture
+    └── LinearSettings.jsx       ← Linear integration configuration
 ```
 
 ---
 
-## 🚀 6. Ambientes e Pipelines de Deploy
+## 🚀 6. Environments and Deploy Pipelines
 
--   **Desenvolvimento:** `npm run dev` no diretório `dashboard/` inicia backend (:3001) e frontend (:5173) simultaneamente via `start-studio.js`.
--   **Staging:** N/A — ferramenta local por design.
--   **Produção:** N/A — ferramenta local por design (Fase 3 introduzirá versão cloud).
+-   **Development:** `npm run dev` in the `dashboard/` directory starts the backend (:3001) and frontend (:5173) simultaneously via `start-studio.js`.
+-   **Staging:** N/A — local tool by design.
+-   **Production:** N/A — local tool by design (Phase 3 will introduce a cloud version).
 
 ---
 
-## 📡 7. Contrato de APIs — Endpoints do Studio
+## 📡 7. API Contract — Studio Endpoints
 
 ### Projects
-| Método | Rota | Descrição |
+| Method | Route | Description |
 | :--- | :--- | :--- |
-| GET | `/api/projects` | Lista workspaces |
-| POST | `/api/projects/add` | Adiciona workspace |
-| POST | `/api/projects/select` | Ativa workspace |
+| GET | `/api/projects` | List workspaces |
+| POST | `/api/projects/add` | Add workspace |
+| POST | `/api/projects/select` | Activate workspace |
 | DELETE | `/api/projects` | Remove workspace |
 
 ### Project Config
-| Método | Rota | Descrição |
+| Method | Route | Description |
 | :--- | :--- | :--- |
 | GET | `/api/project/status` | Status + squads + approvals |
-| POST | `/api/project/initialize` | Grava configuração nos MDs |
-| POST | `/api/project/apply-template` | Aplica preset Lean/Enterprise/Tech |
-| POST | `/api/project/apply-example` | Aplica exemplo pré-configurado |
+| POST | `/api/project/initialize` | Write configuration to MDs |
+| POST | `/api/project/apply-template` | Apply Lean/Enterprise/Tech preset |
+| POST | `/api/project/apply-example` | Apply pre-configured example |
 
 ### Workflow Pipeline
-| Método | Rota | Descrição |
+| Method | Route | Description |
 | :--- | :--- | :--- |
-| GET | `/api/workflow/board` | Lê cards de todas as fases |
-| POST | `/api/workflow/move` | Move card entre fases |
-| POST | `/api/workflow/create-card` | Cria novo card via UI |
-| POST | `/api/workflow/refine` | Refina PRD com contexto LLM |
-| POST | `/api/workflow/estimate` | Estima complexidade com LLM |
-| POST | `/api/workflow/qa-review` | QA técnico com LLM |
-| POST | `/api/workflow/human-approve` | Gate de aprovação humana |
-| POST | `/api/workflow/approve-ceo` | Análise CEO (simulação) |
-| POST | `/api/workflow/approve-ceo-real` | Análise CEO (LLM real) |
+| GET | `/api/workflow/board` | Read cards from all phases |
+| POST | `/api/workflow/move` | Move card between phases |
+| POST | `/api/workflow/create-card` | Create new card via UI |
+| POST | `/api/workflow/refine` | Refine PRD with LLM context |
+| POST | `/api/workflow/estimate` | Estimate complexity with LLM |
+| POST | `/api/workflow/qa-review` | Technical QA with LLM |
+| POST | `/api/workflow/human-approve` | Human approval gate |
+| POST | `/api/workflow/approve-ceo` | CEO analysis (simulation) |
+| POST | `/api/workflow/approve-ceo-real` | CEO analysis (real LLM) |
 
 ### System
-| Método | Rota | Descrição |
+| Method | Route | Description |
 | :--- | :--- | :--- |
-| GET | `/api/system/check` | Diagnóstico de saúde |
-| POST | `/api/system/fix-placeholder` | Corrige placeholder inline |
+| GET | `/api/system/check` | Health diagnostics |
+| POST | `/api/system/fix-placeholder` | Fix inline placeholder |
 
 ### Linear
-| Método | Rota | Descrição |
+| Method | Route | Description |
 | :--- | :--- | :--- |
-| GET | `/api/linear/settings` | Retorna status da conexão |
-| POST | `/api/linear/settings` | Salva API key + team ID |
-| POST | `/api/linear/create-issue` | Cria issue a partir do card |
-| POST | `/api/linear/webhook` | Recebe updates do Linear |
+| GET | `/api/linear/settings` | Returns connection status |
+| POST | `/api/linear/settings` | Save API key + team ID |
+| POST | `/api/linear/create-issue` | Create issue from card |
+| POST | `/api/linear/webhook` | Receive updates from Linear |

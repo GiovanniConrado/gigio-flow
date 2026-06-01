@@ -155,6 +155,12 @@ Use the public demo script to show the project in a few minutes:
 
 See [Demo Script](docs/DEMO_SCRIPT.md).
 
+## Extending the Squad
+
+Gigio Flow is designed to be extended with new agent personas. You can add specialists such as a Security Auditor, Data Analyst, Accessibility Reviewer, or any other domain expert that your team needs.
+
+See the full guide: [Adding New Agents](docs/ADDING_NEW_AGENTS.md)
+
 ## Open Source Roadmap
 
 The public roadmap is focused on making Gigio Flow useful for real maintainers:
@@ -197,6 +203,7 @@ Contributions are welcome. The best first contributions are:
 - Linear/GitHub/Vercel integration hardening
 - security review
 - issue templates and product artifact templates
+- **new agent personas** — see [Adding New Agents](docs/ADDING_NEW_AGENTS.md)
 
 See [Contributing Guide](CONTRIBUTING.md).
 

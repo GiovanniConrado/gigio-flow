@@ -1,51 +1,51 @@
-# Padrões de Boards Kanban do Obsidian — {{NOME_DO_PROJETO}}
+# Obsidian Kanban Board Standards — {{NOME_DO_PROJETO}}
 
-> Estas regras são imutáveis e de cumprimento obrigatório para QUALQUER squad ou agente de IA que crie, atualize ou remova cartões na pasta `boards/`.
+> These rules are immutable and mandatory for ANY squad or AI agent that creates, updates, or removes cards in the `boards/` folder.
 
 ---
 
-## 🎨 1. A Estrutura do Kanban Markdown no Obsidian
+## 🎨 1. The Kanban Markdown Structure in Obsidian
 
-O plugin Obsidian Kanban utiliza metadados em blocos de comentários HTML e listas ordenadas/desordenadas específicas para renderizar os quadros visuais. Para evitar corromper o layout visual que o fundador gerencia, siga estritamente esta estrutura:
+The Obsidian Kanban plugin uses metadata in HTML comment blocks and specific ordered/unordered lists to render visual boards. To avoid corrupting the visual layout managed by the founder, strictly follow this structure:
 
--   **O Bloco de Configuração (comentário HTML final):** Todo arquivo Kanban deve terminar obrigatoriamente com a tag de metadados do Obsidian Kanban, sem qualquer modificação na sua estrutura de chaves:
+-   **The Configuration Block (final HTML comment):** Every Kanban file must end mandatorily with the Obsidian Kanban metadata tag, without any modification to its key structure:
     ```markdown
     %% kanban:settings
     ```
--   **Estrutura de Listas (Colunas):** As colunas do Kanban são representadas por cabeçalhos de nível 2 (`##`). Os cartões (tasks) dentro de cada coluna são listas desordenadas (`- [ ]` ou `- [x]`):
+-   **List Structure (Columns):** Kanban columns are represented by level-2 headings (`##`). Cards (tasks) within each column are unordered lists (`- [ ]` or `- [x]`):
     ```markdown
     ## 📥 Backlog
-    - [ ] [BLO-12] Criar tela de cadastro
-    - [ ] [BLO-15] Ajustar botão de login
+    - [ ] [BLO-12] Create registration screen
+    - [ ] [BLO-15] Adjust login button
 
-    ## 🏃 Em Progresso
-    - [ ] [BLO-10] Integrar API de pagamento
+    ## 🏃 In Progress
+    - [ ] [BLO-10] Integrate payment API
 
-    ## ✅ Concluído
-    - [x] [BLO-08] Layout da Landing Page
+    ## ✅ Done
+    - [x] [BLO-08] Landing Page Layout
     ```
 
 ---
 
-## 🚫 2. Regras de Edição Automática de Cartões (Card Movement Rules)
+## 🚫 2. Automatic Card Editing Rules (Card Movement Rules)
 
-Sempre que a IA concluir uma tarefa ou mover seu status:
--   **Preservação de IDs de Issues:** Nunca altere ou apague o prefixo de ID da issue (ex: `[BLO-XX]`) contido no texto do cartão.
--   **Marcação de Conclusão:** Ao mover um cartão para a coluna **Concluído** (ou equivalente), altere a caixa de seleção de `- [ ]` para `- [x]` obrigatoriamente.
--   **Evitar Duplicações:** Ao mover um cartão de uma coluna para outra (ex: `Backlog` ➔ `Em Progresso`), remova a linha correspondente da coluna antiga antes de inseri-la na nova. Nunca deixe o mesmo ID de issue duplicado em duas colunas.
--   **Ordem Cronológica / Prioridade:** Mantenha os cartões mais urgentes e prioritários no topo da lista de cada coluna.
+Whenever an AI completes a task or moves its status:
+-   **Issue ID Preservation:** Never alter or delete the issue ID prefix (e.g., `[BLO-XX]`) contained in the card text.
+-   **Completion Marking:** When moving a card to the **Done** column (or equivalent), change the checkbox from `- [ ]` to `- [x]` mandatorily.
+-   **Avoid Duplications:** When moving a card from one column to another (e.g., `Backlog` ➔ `In Progress`), remove the corresponding line from the old column before inserting it in the new one. Never leave the same issue ID duplicated in two columns.
+-   **Chronological / Priority Order:** Keep the most urgent and prioritized cards at the top of each column's list.
 
 ---
 
-## 🔗 3. Uso de Links e Metadados do Obsidian
+## 🔗 3. Use of Obsidian Links and Metadata
 
--   **Links Internos de Notas:** Se o cartão possuir um link para um arquivo markdown de tarefa local em `workflows/` ou uma PRD, use a sintaxe de link interno do Obsidian:
+-   **Internal Note Links:** If the card has a link to a local task markdown file in `workflows/` or a PRD, use Obsidian's internal link syntax:
     ```markdown
-    - [ ] [[workflows/pendentes/BLO-12-cadastro.md|BLO-12 Criar tela de cadastro]]
+    - [ ] [[workflows/pendentes/BLO-12-cadastro.md|BLO-12 Create registration screen]]
     ```
--   **Tags de Prioridade e Responsáveis:** Utilize tags curtas no final do texto do cartão para indicar prioridade e responsáveis, facilitando a filtragem visual humana no Obsidian:
+-   **Priority and Assignee Tags:** Use short tags at the end of the card text to indicate priority and assignees, making visual filtering easier in Obsidian:
     ```markdown
-    - [ ] [[workflows/pendentes/BLO-12.md|BLO-12 Cadastro]] #alta #pm @dev
+    - [ ] [[workflows/pendentes/BLO-12.md|BLO-12 Registration]] #high #pm @dev
     ```
-    -   Tags de Prioridade sugeridas: `#alta`, `#media`, `#baixa`.
-    -   Tags de Squad recomendadas: `#pm`, `#cto`, `#dev`, `#qa`.
+    -   Suggested Priority Tags: `#high`, `#medium`, `#low`.
+    -   Recommended Squad Tags: `#pm`, `#cto`, `#dev`, `#qa`.

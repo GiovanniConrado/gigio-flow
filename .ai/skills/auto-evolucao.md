@@ -1,50 +1,50 @@
-# Skill: Auto-Evolução do Workspace (Self-Evolution Skill) — {{NOME_DO_PROJETO}}
+# Skill: Workspace Self-Evolution (Self-Evolution Skill) — {{NOME_DO_PROJETO}}
 
-> Esta skill ensina os agentes de IA a atualizarem autonomamente o estado e a base de conhecimento do projeto a cada entrega, garantindo que o repositório seja auto-documentado.
-
----
-
-## 🧠 A Filosofia da Auto-Evolução
-
-Em projetos ágeis comuns, a documentação técnica (arquitetura, estado atual das telas, logs de decisão) rapidamente se torna obsoleta porque os desenvolvedores humanos priorizam a escrita de código em detrimento da escrita de textos explicativos.
-
-No **Gigio Flow**, a IA resolve esse problema através do ritual de **Auto-Evolução**. Toda vez que uma tarefa é concluída ou uma decisão arquitetural relevante é tomada, a própria IA atua ativamente para registrar essa mudança na base de conhecimento, garantindo que o repositório seja a única e definitiva Fonte da Verdade ("Single Source of Truth") atualizada em tempo real.
+> This skill teaches AI agents to autonomously update the project's state and knowledge base after each delivery, ensuring the repository is self-documented.
 
 ---
 
-## 🛠️ O Protocolo de Execução (Passo a Passo)
+## 🧠 The Philosophy of Self-Evolution
 
-Imediatamente após receber a validação final (APROVADO) do QA Agent para uma tarefa, o **Process Analyst Agent** ou o **CTO Agent** deve rodar os seguintes passos:
+In typical agile projects, technical documentation (architecture, current state of screens, decision logs) quickly becomes outdated because human developers prioritize writing code over writing explanatory text.
 
-### Passo 1: Atualizar o `knowledge/ESTADO_ATUAL.md`
--   Abra o arquivo [`knowledge/ESTADO_ATUAL.md`](file:///c:/Users/conra/Desktop/gigio-flow/knowledge/ESTADO_ATUAL.md).
--   Localize a seção correspondente ao componente modificado.
--   Atualize a data de "Última Modificação" para a data atual.
--   Escreva um resumo objetivo das novas funções implementadas, arquivos criados e novos endpoints ativos.
--   Se houver um refactoring técnico, registre o impacto no tamanho final ou performance da aplicação.
+In **Gigio Flow**, AI solves this problem through the **Self-Evolution** ritual. Every time a task is completed or a relevant architectural decision is made, the AI itself actively records that change in the knowledge base, ensuring the repository is the one and definitive Single Source of Truth — updated in real time.
 
-### Passo 2: Adicionar uma entrada em `knowledge/HISTORICO.md`
--   Abra o arquivo [`knowledge/HISTORICO.md`](file:///c:/Users/conra/Desktop/gigio-flow/knowledge/HISTORICO.md).
--   Insira uma nova linha ou bloco no topo da lista cronológica de marcos com a data atual.
--   Estrutura da Entrada:
+---
+
+## 🛠️ The Execution Protocol (Step by Step)
+
+Immediately after receiving the final validation (APPROVED) from the QA Agent for a task, the **Process Analyst Agent** or the **CTO Agent** must run the following steps:
+
+### Step 1: Update `knowledge/ESTADO_ATUAL.md`
+-   Open the file [`knowledge/ESTADO_ATUAL.md`](file:///c:/Users/conra/Desktop/gigio-flow/knowledge/ESTADO_ATUAL.md).
+-   Locate the section corresponding to the modified component.
+-   Update the "Last Modified" date to the current date.
+-   Write an objective summary of the new functions implemented, files created, and new active endpoints.
+-   If there is a technical refactoring, record the impact on the final application size or performance.
+
+### Step 2: Add an entry to `knowledge/HISTORICO.md`
+-   Open the file [`knowledge/HISTORICO.md`](file:///c:/Users/conra/Desktop/gigio-flow/knowledge/HISTORICO.md).
+-   Insert a new line or block at the top of the chronological milestone list with the current date.
+-   Entry Structure:
     ```markdown
-    ### [YYYY-MM-DD] — [Título curto da Decisão/Entrega]
-    - **O que mudou:** [Resumo de 1 frase da entrega]
-    - **Contexto & Motivação:** [Por que essa decisão foi tomada ou o que motivou a mudança]
-    - **Impacto no Sistema:** [Quais arquivos/tabelas foram impactados e riscos mitigados]
+    ### [YYYY-MM-DD] — [Short Decision/Delivery Title]
+    - **What changed:** [1-sentence summary of the delivery]
+    - **Context & Motivation:** [Why this decision was made or what motivated the change]
+    - **System Impact:** [Which files/tables were impacted and risks mitigated]
     ```
 
-### Passo 3: Registrar e Arquivar a Tarefa concluída localmente
--   Mova o arquivo markdown da tarefa correspondente de `workflows/em-progresso/` para a pasta `.ai/history/concluidos/` (ou crie a pasta se não existir).
--   Adicione uma seção especial no final do arquivo markdown chamada `## Resultado da Execução` detalhando:
-    -   Commits gerados (hashes e mensagens).
-    -   Evidências dos testes estáticos e manuais rodados pelo QA.
-    -   Data e hora de conclusão.
+### Step 3: Record and Archive the completed task locally
+-   Move the corresponding task markdown file from `workflows/em-progresso/` to the `.ai/history/concluidos/` folder (or create the folder if it does not exist).
+-   Add a special section at the end of the markdown file called `## Execution Result` detailing:
+    -   Commits generated (hashes and messages).
+    -   Evidence of static and manual tests run by QA.
+    -   Completion date and time.
 
 ---
 
-## 🚫 Regras que a IA nunca quebra
+## 🚫 Rules the AI never breaks
 
--   **Sem Sessões sem Registro:** É expressamente proibido que a IA conclua uma alteração de código ou de PRD e encerre a sessão sem realizar os Passos 1 e 2.
--   **Rigor nas Datas:** Todas as datas devem seguir o formato internacional padrão ISO: `YYYY-MM-DD` (ex: `2026-05-27`).
--   **Clareza Humilde:** A escrita dos logs de histórico e estado atual deve ser técnica, precisa, resumida e humilde, evitando termos promocionais ou superlativos.
+-   **No Unregistered Sessions:** It is expressly forbidden for the AI to complete a code or PRD change and close the session without performing Steps 1 and 2.
+-   **Date Rigor:** All dates must follow the standard international ISO format: `YYYY-MM-DD` (e.g., `2026-05-27`).
+-   **Humble Clarity:** The writing of history and current-state logs must be technical, precise, concise, and humble — avoiding promotional or superlative terms.

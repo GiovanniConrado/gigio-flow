@@ -1,96 +1,96 @@
-# [PRD] — [Título da Funcionalidade / Recurso]
+# [PRD] — [Feature / Resource Title]
 
-> **Autores:** PM Agent & CTO Agent
-> **Data:** [YYYY-MM-DD]
-> **Status:** ⏳ Em Revisão (Aguardando aprovação humana com "OK")
+> **Authors:** PM Agent & CTO Agent
+> **Date:** [YYYY-MM-DD]
+> **Status:** ⏳ Under Review (Awaiting human approval with "OK")
 > **Issue ID:** [GIG-XX]
 
 ---
 
-## 🎯 1. Visão Geral e Contexto de Negócio (PM)
+## 🎯 1. Overview and Business Context (PM)
 
-### Objetivo
-[Qual problema real do cliente ou do negócio este recurso resolve? Uma frase clara e de fácil entendimento.]
+### Objective
+[What real customer or business problem does this feature solve? A clear, easy-to-understand sentence.]
 
-### Personas Afetadas
-- [ ] **[Nome da Persona A]:** [Ex: Cliente final buscando agilidade.]
-- [ ] **[Nome da Persona B]:** [Ex: Administrador gerenciando relatórios.]
+### Affected Personas
+- [ ] **[Persona A Name]:** [E.g., End customer seeking agility.]
+- [ ] **[Persona B Name]:** [E.g., Administrator managing reports.]
 
-### Impacto nas Métricas
-[Qual indicador de sucesso (KPI) pretendemos impactar? Ex: Aumentar taxa de conversão em 5%, reduzir bounce rate, etc.]
-
----
-
-## 🎨 2. Jornada do Usuário & UX (PM)
-
-### Fluxo Ideal (Golden Path)
-- **Passo 1:** [Ação inicial do usuário] ➔ **Resultado:** [O que o sistema exibe/faz]
-- **Passo 2:** [Segunda ação] ➔ **Resultado:** [O que o sistema exibe/faz]
-
-### Casos de Borda (Edge Cases)
-- **Sem Conexão de Rede:** [Como o sistema reage]
-- **Campos em Branco / Inválidos:** [Como os formulários exibem os erros de validação]
+### Metrics Impact
+[Which success indicator (KPI) do we intend to impact? E.g., Increase conversion rate by 5%, reduce bounce rate, etc.]
 
 ---
 
-## 🛠️ 3. Especificação Técnica & Arquitetura (CTO)
+## 🎨 2. User Journey & UX (PM)
 
-### Modelagem de Dados (Banco de Dados)
-*Descreva alterações em tabelas, colunas, chaves primárias e políticas RLS/Segurança.*
+### Ideal Flow (Golden Path)
+- **Step 1:** [Initial user action] ➔ **Result:** [What the system shows/does]
+- **Step 2:** [Second action] ➔ **Result:** [What the system shows/does]
+
+### Edge Cases
+- **No Network Connection:** [How the system reacts]
+- **Blank / Invalid Fields:** [How forms display validation errors]
+
+---
+
+## 🛠️ 3. Technical Specification & Architecture (CTO)
+
+### Data Modeling (Database)
+*Describe changes to tables, columns, primary keys, and RLS/Security policies.*
 
 ```sql
--- Script de Migração SQL Sugerido:
--- CREATE TABLE public.exemplo (
+-- Suggested SQL Migration Script:
+-- CREATE TABLE public.example (
 --     id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
 --     created_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL
 -- );
 ```
 
-### Gerenciamento de Estado & APIs
-- **Stores Globais:** [Caminho do arquivo de store e variáveis a criar]
-- **Rotas de API / Endpoints:** [Novos endpoints ou conexões de microsserviços]
+### State Management & APIs
+- **Global Stores:** [Store file path and variables to create]
+- **API Routes / Endpoints:** [New endpoints or microservice connections]
 
-### Trava de Design (Design System)
-- **Cores / Tokens Utilizados:** [Tokens a importar de knowledge/DESIGN_SYSTEM.md]
-- **Componentes de UI Reutilizáveis:** [Componentes existentes a reutilizar]
-
----
-
-## 🧪 4. Critérios de Aceite & Checklist de QA
-
-### Critérios de Aceite Funcionais
-- [ ] **Ação:** [Passo a passo testável] ➔ **Resultado esperado:** [Comportamento correto]
-- [ ] **Ação:** [Passo a passo testável] ➔ **Resultado esperado:** [Comportamento correto]
-
-### Acessibilidade
-- [ ] Todo componente interativo modificado possui `accessibilityLabel` ou tags equivalentes.
-- [ ] Contraste visual atende às especificações WCAG.
+### Design Lock (Design System)
+- **Colors / Tokens Used:** [Tokens to import from knowledge/DESIGN_SYSTEM.md]
+- **Reusable UI Components:** [Existing components to reuse]
 
 ---
 
-## 📋 5. Fatiamento de Tarefas Ágeis (Linear/GitHub/Obsidian)
+## 🧪 4. Acceptance Criteria & QA Checklist
 
-*Divisão das tarefas seguindo a regra de Atomicidade da Sessão de IA.*
+### Functional Acceptance Criteria
+- [ ] **Action:** [Testable step by step] ➔ **Expected result:** [Correct behavior]
+- [ ] **Action:** [Testable step by step] ➔ **Expected result:** [Correct behavior]
 
-### 👥 Squad PM (Especificações & Textos)
-- **Título:** [PM] Detalhar copy e fluxos para [Funcionalidade]
-- **Prioridade:** [High/Medium/Low]
-- **Critérios:**
-  - [ ] Copy validada e livre de erros ortográficos.
+### Accessibility
+- [ ] Every modified interactive component has `accessibilityLabel` or equivalent tags.
+- [ ] Visual contrast meets WCAG specifications.
 
-### 💻 Squad DEV (Codificação)
-- **Título:** [DEV] Implementar backend/store para [Funcionalidade]
-- **Prioridade:** [High/Medium/Low]
-- **Critérios:**
-  - [ ] Criar tabelas e rotas de API conforme a especificação técnica do CTO.
-- **Título:** [DEV] Implementar telas visuais para [Funcionalidade]
-- **Prioridade:** [High/Medium/Low]
-- **Critérios:**
-  - [ ] Implementar as telas utilizando estritamente os tokens de design oficiais.
+---
 
-### 🛡️ Squad QA (Homologação)
-- **Título:** [QA] Homologar fluxos e segurança de [Funcionalidade]
-- **Prioridade:** [High/Medium/Low]
-- **Critérios:**
-  - [ ] Validar todos os Critérios de Aceite funcionais em Staging.
-  - [ ] Auditar políticas de segurança de dados e acessibilidade.
+## 📋 5. Agile Task Slicing (Linear/GitHub/Obsidian)
+
+*Task breakdown following the AI Session Atomicity rule.*
+
+### 👥 PM Squad (Specifications & Copy)
+- **Title:** [PM] Detail copy and flows for [Feature]
+- **Priority:** [High/Medium/Low]
+- **Criteria:**
+  - [ ] Copy validated and free of spelling errors.
+
+### 💻 DEV Squad (Coding)
+- **Title:** [DEV] Implement backend/store for [Feature]
+- **Priority:** [High/Medium/Low]
+- **Criteria:**
+  - [ ] Create tables and API routes as per the CTO's technical specification.
+- **Title:** [DEV] Implement visual screens for [Feature]
+- **Priority:** [High/Medium/Low]
+- **Criteria:**
+  - [ ] Implement screens using strictly the official design tokens.
+
+### 🛡️ QA Squad (Acceptance Testing)
+- **Title:** [QA] Validate flows and security of [Feature]
+- **Priority:** [High/Medium/Low]
+- **Criteria:**
+  - [ ] Validate all functional Acceptance Criteria in Staging.
+  - [ ] Audit data security policies and accessibility.

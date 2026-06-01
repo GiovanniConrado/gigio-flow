@@ -1,35 +1,35 @@
-# Guia do Design System e Tokens — Gigio Flow
+# Design System Guide and Tokens — Gigio Flow
 
-> Este arquivo reúne os padrões visuais, cores, tipografia e espaçamentos oficiais do Gigio Flow Studio. O Dev Agent deve importá-los estritamente para garantir a fidelidade visual premium (Design Lock).
+> This file brings together the official visual standards, colors, typography, and spacing of Gigio Flow Studio. The Dev Agent must import them strictly to ensure premium visual fidelity (Design Lock).
 > 
-> **ATENÇÃO:** Estes tokens estão sincronizados com os valores reais do arquivo `dashboard/src/index.css`. Qualquer alteração visual deve ser feita primeiro aqui e depois no CSS.
+> **ATTENTION:** These tokens are synchronized with the real values in the `dashboard/src/index.css` file. Any visual change must be made here first and then in the CSS.
 
 ---
 
-## 🎨 1. Paleta de Cores Oficial (Tokens de Cor)
+## 🎨 1. Official Color Palette (Color Tokens)
 
-### Cores de Ênfase (Accent Colors)
--   `--accent-purple`: `#5e6ad2` → Cor principal de destaque, botões primários, ícones ativos
--   `--accent-purple-dim`: `rgba(94, 106, 210, 0.15)` → Backgrounds sutis de elementos purple
--   `--accent-teal`: `#06b6d4` → Cor secundária, destaque alternativo
--   `--accent-green`: `#2ea376` → Sucesso, status ativo, aprovações
--   `--accent-green-dim`: `rgba(46, 163, 118, 0.12)` → Background sutil de sucesso
--   `--accent-red`: `#e5484d` → Erros, rejeições, alertas críticos
--   `--accent-red-dim`: `rgba(229, 72, 77, 0.12)` → Background sutil de erro
+### Accent Colors
+-   `--accent-purple`: `#5e6ad2` → Primary highlight color, primary buttons, active icons
+-   `--accent-purple-dim`: `rgba(94, 106, 210, 0.15)` → Subtle backgrounds for purple elements
+-   `--accent-teal`: `#06b6d4` → Secondary color, alternative highlight
+-   `--accent-green`: `#2ea376` → Success, active status, approvals
+-   `--accent-green-dim`: `rgba(46, 163, 118, 0.12)` → Subtle success background
+-   `--accent-red`: `#e5484d` → Errors, rejections, critical alerts
+-   `--accent-red-dim`: `rgba(229, 72, 77, 0.12)` → Subtle error background
 
-### Tema Escuro (Default)
--   `--bg-primary`: `#0c0d10` → Background principal (obsidian charcoal)
--   `--bg-secondary`: `#141519` → Cards e painéis (graphite)
--   `--bg-tertiary`: `#1c1d24` → Superfícies elevadas
--   `--border-color`: `#202127` → Bordas sutis
--   `--border-focus`: `#3e3f4a` → Bordas com foco
+### Dark Theme (Default)
+-   `--bg-primary`: `#0c0d10` → Main background (obsidian charcoal)
+-   `--bg-secondary`: `#141519` → Cards and panels (graphite)
+-   `--bg-tertiary`: `#1c1d24` → Elevated surfaces
+-   `--border-color`: `#202127` → Subtle borders
+-   `--border-focus`: `#3e3f4a` → Focused borders
 
-### Tipografia
--   `--text-primary`: `#f1f2f4` → Texto principal (branco técnico)
--   `--text-secondary`: `#8a8f98` → Texto secundário (graphite gray)
--   `--text-muted`: `#5e6168` → Texto atenuado (dimmed slate)
+### Typography
+-   `--text-primary`: `#f1f2f4` → Main text (technical white)
+-   `--text-secondary`: `#8a8f98` → Secondary text (graphite gray)
+-   `--text-muted`: `#5e6168` → Muted text (dimmed slate)
 
-### Tema Claro
+### Light Theme
 -   `--bg-primary`: `#f6f8fa`
 -   `--bg-secondary`: `#ffffff`
 -   `--text-primary`: `#1b1f23`
@@ -37,25 +37,25 @@
 
 ---
 
-## 📐 2. Escala de Espaçamento e Margens
+## 📐 2. Spacing and Margin Scale
 
-Baseada na escala de 4px do Linear:
--   `4px` → Micro ajustes, gaps entre ícone e texto em elementos compactos
--   `6px` → Gap padrão de botões e badges
--   `8px` → Padding interno de itens de menu e navegação
--   `14px` → Padding de botões
--   `16px` → Seções da sidebar, form-groups
--   `18px` → Padding padrão de glass-card
--   `20px` → Padding da sidebar
--   `24px` → Padding do content envelope
--   `30px` → Padding do dashboard-content
--   `35px` → Padding do wizard card inicial
+Based on Linear's 4px scale:
+-   `4px` → Micro adjustments, gaps between icon and text in compact elements
+-   `6px` → Default gap for buttons and badges
+-   `8px` → Internal padding of menu items and navigation
+-   `14px` → Button padding
+-   `16px` → Sidebar sections, form-groups
+-   `18px` → Default glass-card padding
+-   `20px` → Sidebar padding
+-   `24px` → Content envelope padding
+-   `30px` → Dashboard-content padding
+-   `35px` → Initial wizard card padding
 
 ---
 
-## 🅰️ 3. Padrões de Tipografia
+## 🅰️ 3. Typography Standards
 
--   **Família:** `Inter` (Google Fonts) com fallback `-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif`
+-   **Family:** `Inter` (Google Fonts) with fallback `-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif`
 -   **Base:** `13px`, `line-height: 1.5`
 -   **Section Labels:** `0.62rem`, `weight: 700`, `uppercase`, `letter-spacing: 0.05em`
 -   **Menu Items:** `0.8rem`, `weight: 500`
@@ -66,44 +66,44 @@ Baseada na escala de 4px do Linear:
 
 ---
 
-## 🧩 4. Componentes de Design
+## 🧩 4. Design Components
 
 ### Buttons
--   `.btn-primary` → Background `--accent-purple`, texto branco, radius `6px`, padding `8px 14px`, `font-size: 12px`
--   `.btn-secondary` → Background `rgba(255,255,255,0.03)`, borda `--border-color`, mesmos paddings
+-   `.btn-primary` → Background `--accent-purple`, white text, radius `6px`, padding `8px 14px`, `font-size: 12px`
+-   `.btn-secondary` → Background `rgba(255,255,255,0.03)`, border `--border-color`, same padding
 
 ### Cards
 -   `.glass-card` → Background `--glass-bg`, border `--glass-border`, shadow `0 4px 20px var(--glass-shadow)`, radius `8px`, padding `18px`
--   `:hover` → Border muda para `--border-focus`, shadow aumenta
+-   `:hover` → Border changes to `--border-focus`, shadow increases
 
 ### Form Controls
 -   `.form-input` → Background `--bg-primary`, border `--border-color`, radius `6px`, padding `8px 12px`, `font-size: 12px`
 -   `:focus` → Border + box-shadow `--accent-purple`
--   `.form-textarea` → Igual ao input com `resize: vertical`, `min-height: 80px`
+-   `.form-textarea` → Same as input with `resize: vertical`, `min-height: 80px`
 
 ### Animations
 -   `animate-slide-in` → `slideInUp 0.25s cubic-bezier(0.16, 1, 0.3, 1)`
--   `pulse-green` → `sutilPulse 2.5s infinite ease-in-out`
+-   `pulse-green` → `subtlePulse 2.5s infinite ease-in-out`
 -   `org-connector` → `dash 12s linear infinite` (stroke-dasharray)
--   Transição padrão: `all 0.2s cubic-bezier(0.4, 0, 0.2, 1)`
+-   Default transition: `all 0.2s cubic-bezier(0.4, 0, 0.2, 1)`
 
 ---
 
-## 📱 5. Responsividade e Breakpoints
+## 📱 5. Responsiveness and Breakpoints
 
--   **Layout:** Grid 2 colunas fixas `260px 1fr` (sidebar + content)
--   **Sidebar width:** `260px` fixo
+-   **Layout:** Fixed 2-column grid `260px 1fr` (sidebar + content)
+-   **Sidebar width:** `260px` fixed
 -   **Content padding:** `24px 30px`
 -   **Header height:** `45px`
--   **Scrollbar:** Custom com `width: 6px`, thumb color `--border-color` → hover `--accent-purple`
+-   **Scrollbar:** Custom with `width: 6px`, thumb color `--border-color` → hover `--accent-purple`
 
-> ⚠️ **Gap atual:** O Studio não é responsivo para mobile (< 768px). Isso é intencional para a versão V4 (ferramenta desktop local). Responsividade será adicionada na Fase 3 (Cloud).
+> ⚠️ **Current gap:** The Studio is not responsive for mobile (< 768px). This is intentional for the V4 version (local desktop tool). Responsiveness will be added in Phase 3 (Cloud).
 
 ---
 
-## 🎨 6. Padrão de Ícones
+## 🎨 6. Icon Standards
 
--   **Biblioteca:** `lucide-react` (versão `^1.16.0`)
--   **Tamanhos padrão:** `9px` (micro), `12-13px` (sidebar), `15px` (headers de seção), `24px` (feature icons), `28-32px` (hero icons)
--   **Estilo:** Stroke-based, `strokeWidth` padrão da lib
--   **Cores:** Herdam de `color: inherit` ou recebem `color: var(--accent-purple)` quando ativos
+-   **Library:** `lucide-react` (version `^1.16.0`)
+-   **Default sizes:** `9px` (micro), `12-13px` (sidebar), `15px` (section headers), `24px` (feature icons), `28-32px` (hero icons)
+-   **Style:** Stroke-based, library default `strokeWidth`
+-   **Colors:** Inherited from `color: inherit` or receive `color: var(--accent-purple)` when active

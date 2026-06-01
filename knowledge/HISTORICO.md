@@ -1,52 +1,52 @@
-# Histórico de Decisões e Marcos — Gigio Flow
+# Decision History and Milestones — Gigio Flow
 
-> Log cronológico reverso de todas as decisões arquiteturais (ADRs) e marcos de entrega relevantes. Atualizado pela IA a cada sessão concluída.
-
----
-
-### [2026-06-01] — Suíte de Testes Automatizados com Vitest e Supertest
-- **O que mudou:** Implementação de 25 testes automatizados unitários e de integração abrangendo segurança de I/O em disco contra Path Traversal, rotas de Kanban local, simulações avançadas de pipeline LLM (refine, estimate, qa-review) e webhooks/APIs do Linear.
-- **Contexto & Motivação:** Preparação técnica do repositório para o programa Codex for Open Source da OpenAI. A ausência de testes automatizados era o principal gargalo técnico para aprovação em programas de excelência open-source.
-- **Impacto no Sistema:** Instalação de `vitest` e `supertest` no ambiente de desenvolvimento do Studio. Criação da pasta `dashboard/tests/` contendo testes 100% isolados que rodam de forma offline, veloz (680ms) e sem alterar arquivos reais de produção do usuário.
+> Reverse chronological log of all architectural decisions (ADRs) and relevant delivery milestones. Updated by the AI at the end of each completed session.
 
 ---
 
-### [2026-05-27] — Pipeline LLM Completo + Integração Linear Iniciados
-- **O que mudou:** Início da implementação do pipeline completo de entrega: refinamento LLM com contexto do sistema, estimativa de complexidade, QA técnico automatizado, gate de aprovação humana e integração com Linear API.
-- **Contexto & Motivação:** Análise crítica do projeto revelou que o Studio estava incompleto como painel de configuração e que o fluxo operacional precisava ser conectado ao Linear como ferramenta de execução. Decisão de usar o Linear como sistema operacional de tarefas e o Studio como painel de configuração/visualização/pipeline.
-- **Impacto no Sistema:** Adição de 4 novos endpoints no backend (refine, estimate, qa-review, create-card), novo componente PipelineView.jsx, refatoração do server.js em módulos routes/ e services/. Instalação de dotenv e express-rate-limit.
+### [2026-06-01] — Automated Test Suite with Vitest and Supertest
+- **What changed:** Implementation of 25 automated unit and integration tests covering disk I/O security against Path Traversal, local Kanban routes, advanced LLM pipeline simulations (refine, estimate, qa-review), and Linear webhooks/APIs.
+- **Context & Motivation:** Technical preparation of the repository for OpenAI's Codex for Open Source program. The absence of automated tests was the main technical bottleneck for approval in open-source excellence programs.
+- **System Impact:** Installation of `vitest` and `supertest` in the Studio development environment. Creation of the `dashboard/tests/` folder containing 100% isolated tests that run offline, fast (680ms), and without modifying real production files of the user.
 
 ---
 
-### [2026-05-27] — Dogfooding: knowledge/ Preenchido com Dados Reais
-- **O que mudou:** Todos os arquivos da pasta `knowledge/` foram preenchidos com os dados reais do próprio Gigio Flow como produto.
-- **Contexto & Motivação:** Contradição identificada: o projeto promovia gestão de conhecimento estruturada mas não aplicava isso em si mesmo. VISAO.md, ESTADO_ATUAL.md, ROADMAP.md, ARQUITETURA.md, HISTORICO.md, GLOSSARIO.md e DESIGN_SYSTEM.md agora contêm informações reais.
-- **Impacto no Sistema:** A IA agora tem contexto real sobre o próprio produto ao trabalhar no Gigio Flow, tornando o refinamento LLM muito mais preciso.
+### [2026-05-27] — Full LLM Pipeline + Linear Integration Started
+- **What changed:** Start of the implementation of the complete delivery pipeline: LLM refinement with system context, complexity estimation, automated technical QA, human approval gate, and Linear API integration.
+- **Context & Motivation:** Critical analysis of the project revealed that the Studio was incomplete as a configuration panel and that the operational flow needed to be connected to Linear as the execution tool. Decision to use Linear as the task operating system and the Studio as the configuration/visualization/pipeline panel.
+- **System Impact:** Addition of 4 new backend endpoints (refine, estimate, qa-review, create-card), new PipelineView.jsx component, refactoring of server.js into routes/ and services/ modules. Installation of dotenv and express-rate-limit.
 
 ---
 
-### [2026-05-26] — Studio V4 Lançado com CEO Agent Real
-- **O que mudou:** Publicação do Gigio Flow Studio V4 com suporte a Gemini 2.5 Flash e GPT-4o-mini para análise estratégica real pelo CEO Agent. Feature de multi-workspace implementada.
-- **Contexto & Motivação:** Versões anteriores do Studio (V1-V3) tinham apenas simulação de análise. V4 conecta com APIs reais de LLM, permitindo debates estratégicos genuínos.
-- **Impacto no Sistema:** Adição de rotas `/api/workflow/approve-ceo-real` e `/api/workflow/approve-ceo` (fallback simulação). Estado `llmConfig` no frontend para gerenciar provider/key.
+### [2026-05-27] — Dogfooding: knowledge/ Filled with Real Data
+- **What changed:** All files in the `knowledge/` folder were filled with the real data of Gigio Flow itself as a product.
+- **Context & Motivation:** Contradiction identified: the project promoted structured knowledge management but did not apply it to itself. VISAO.md, ESTADO_ATUAL.md, ROADMAP.md, ARQUITETURA.md, HISTORICO.md, GLOSSARIO.md, and DESIGN_SYSTEM.md now contain real information.
+- **System Impact:** The AI now has real context about the product itself when working on Gigio Flow, making LLM refinement much more precise.
 
 ---
 
-### [2026-05-25] — Arquitetura Markdown-as-Database Consolidada
-- **O que mudou:** Decisão definitiva de usar arquivos Markdown como única fonte da verdade do sistema, sem banco de dados relacional ou NoSQL.
-- **Contexto & Motivação:** Avaliamos usar SQLite para persistência do Studio, mas concluímos que o Markdown é superior para o propósito do Gigio Flow: é legível por humanos, legível por IAs, portátil, versionável com git, e não requer infraestrutura adicional.
-- **Impacto no Sistema:** Todo I/O passa por `fs.readFileSync/writeFileSync`. O estado do servidor é volátil (reiniciar o servidor recarrega do disco), o que é o comportamento correto.
+### [2026-05-26] — Studio V4 Launched with Real CEO Agent
+- **What changed:** Publication of Gigio Flow Studio V4 with support for Gemini 2.5 Flash and GPT-4o-mini for real strategic analysis by the CEO Agent. Multi-workspace feature implemented.
+- **Context & Motivation:** Previous Studio versions (V1-V3) had only simulated analysis. V4 connects with real LLM APIs, enabling genuine strategic debates.
+- **System Impact:** Addition of `/api/workflow/approve-ceo-real` and `/api/workflow/approve-ceo` (simulation fallback) routes. `llmConfig` state in the frontend to manage provider/key.
 
 ---
 
-### [2026-05-24] — Estrutura de Squads e Regras Definida
-- **O que mudou:** Criação das 6 personas de Squad (.ai/squads/), 5 regras imutáveis (.ai/rules/), 3 skills operacionais (.ai/skills/) e 4 templates (.ai/templates/).
-- **Contexto & Motivação:** A hipótese central do Gigio Flow é que IAs trabalham melhor com personas específicas, regras rígidas e rituais de sessão definidos. A estrutura de arquivos materializa essa hipótese.
-- **Impacto no Sistema:** Cada arquivo de squad tem ~3.5KB de contexto rico. A IA carrega automaticamente a persona correta ao abrir o workspace em Claude Code/Cursor.
+### [2026-05-25] — Markdown-as-Database Architecture Consolidated
+- **What changed:** Definitive decision to use Markdown files as the system's single source of truth, without a relational or NoSQL database.
+- **Context & Motivation:** We evaluated using SQLite for Studio persistence, but concluded that Markdown is superior for Gigio Flow's purpose: it is human-readable, AI-readable, portable, versionable with git, and requires no additional infrastructure.
+- **System Impact:** All I/O goes through `fs.readFileSync/writeFileSync`. Server state is volatile (restarting the server reloads from disk), which is the correct behavior.
 
 ---
 
-### [2026-06-01] - Open Source Launch Pack para Codex
-- **O que mudou:** Repositorio preparado para publicacao open source MIT com README Codex-first, LICENSE, CONTRIBUTING, SECURITY, CODE_OF_CONDUCT, issue templates, PR template, `.gitignore`, `.env.example`, roadmap publico e documentacao de workflows/integracoes.
-- **Contexto & Motivacao:** Decisao de posicionar o Gigio Flow como protocolo/workspace local para squads de IA com Codex, combinando artefatos de produto, memoria tecnica e integracoes com Linear, GitHub e Vercel.
-- **Impacto no Sistema:** A base publica agora explica que o Linear e o board operacional visual, enquanto o Gigio Flow controla contexto, discovery, PRDs, refinamento, handoff tecnico e registro historico para agentes.
+### [2026-05-24] — Squad Structure and Rules Defined
+- **What changed:** Creation of the 6 Squad personas (.ai/squads/), 5 immutable rules (.ai/rules/), 3 operational skills (.ai/skills/), and 4 templates (.ai/templates/).
+- **Context & Motivation:** The central hypothesis of Gigio Flow is that AIs work better with specific personas, strict rules, and defined session rituals. The file structure materializes this hypothesis.
+- **System Impact:** Each squad file has ~3.5KB of rich context. The AI automatically loads the correct persona when opening the workspace in Claude Code/Cursor.
+
+---
+
+### [2026-06-01] - Open Source Launch Pack for Codex
+- **What changed:** Repository prepared for MIT open source publication with a Codex-first README, LICENSE, CONTRIBUTING, SECURITY, CODE_OF_CONDUCT, issue templates, PR template, `.gitignore`, `.env.example`, public roadmap, and workflows/integrations documentation.
+- **Context & Motivation:** Decision to position Gigio Flow as a local protocol/workspace for AI squads with Codex, combining product artifacts, technical memory, and integrations with Linear, GitHub, and Vercel.
+- **System Impact:** The public base now explains that Linear is the operational visual board, while Gigio Flow controls context, discovery, PRDs, refinement, technical handoff, and historical records for agents.

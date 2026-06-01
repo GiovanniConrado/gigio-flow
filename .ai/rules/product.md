@@ -1,42 +1,42 @@
-# Regras de Produto e Negócio — {{NOME_DO_PROJETO}}
+# Product and Business Rules — {{NOME_DO_PROJETO}}
 
-> Estas regras são imutáveis e de cumprimento obrigatório para o PM Agent, Dev Agent e CTO Agent. Elas descrevem os pilares fundamentais do produto e impedem desvios estratégicos.
-
----
-
-## 🎯 1. O Core Value do Produto (Foco no Usuário)
-
-Define a promessa central do seu produto:
--   **A Dor Principal a Resolver:** [Descreva aqui em uma frase clara qual o principal problema do cliente que este produto resolve. Ex: Simplificar o agendamento de consultas.]
--   **O Valor Inegociável:** [Qual a experiência essencial que o usuário deve ter? Ex: O agendamento deve ser feito em menos de 3 cliques.]
--   **O que o Produto NÃO É:** [Defina limites claros para evitar que a IA queira adicionar escopos de outros mercados. Ex: Este produto não é uma rede social e não deve possuir feeds ou chats abertos.]
+> These rules are immutable and mandatory for the PM Agent, Dev Agent, and CTO Agent. They describe the fundamental pillars of the product and prevent strategic deviations.
 
 ---
 
-## 👥 2. Personas do Ecossistema (Quem Usa o Sistema?)
+## 🎯 1. The Product's Core Value (User Focus)
 
-Para guiar as copies, tons e jornadas do PM Agent, definimos as seguintes personas oficiais:
-
-1.  **Persona Tipo A (Ex: Cliente Final):**
-    -   *Perfil:* Usuário comum buscando resolver sua dor.
-    -   *Tom de voz com ele:* Amigável, simples, sem jargões técnicos, acolhedor.
-    -   *Interface ideal:* Telas limpas, botões grandes, ações diretas e pouca digitação.
-2.  **Persona Tipo B (Ex: Administrador/Parceiro):**
-    -   *Perfil:* Usuário profissional gerenciando a plataforma.
-    -   *Tom de voz com ele:* Eficiente, corporativo, preciso, direto.
-    -   *Interface ideal:* Painéis de dados (dashboards), relatórios, filtros e tabelas robustas.
+Defines your product's central promise:
+-   **The Main Pain to Solve:** [Describe here in one clear sentence what the main customer problem this product solves. e.g., Simplify appointment scheduling.]
+-   **The Non-Negotiable Value:** [What is the essential experience the user must have? e.g., Scheduling must be completed in fewer than 3 clicks.]
+-   **What the Product is NOT:** [Define clear boundaries to prevent the AI from wanting to add scopes from other markets. e.g., This product is not a social network and must not have feeds or open chats.]
 
 ---
 
-## 🚫 3. Limites Críticos de Regras de Negócio (Locks)
+## 👥 2. Ecosystem Personas (Who Uses the System?)
 
-Estas regras impedem que a IA crie fluxos lógicos absurdos ou inseguros:
--   **Trava de Acesso Premium:** Usuários não assinantes (`tier: 'free'`) nunca devem ter acesso a [Recurso X]. A checagem de assinatura deve ser feita no cliente E validada rigidamente no backend.
--   **Coleta Mínima de Dados (Data Privacy):** Nunca solicite dados pessoais que não sejam estritamente necessários para o funcionamento do recurso. Evite formulários com mais de 4 campos na integração inicial.
--   **Comportamento Offline:** O produto deve ser desenhado para lidar graciosamente com quedas de internet. Sempre exiba placeholders de carregamento (skeletons) ou mensagens de erro amigáveis, impedindo telas brancas ou congelamentos.
+To guide the PM Agent's copies, tones, and journeys, we define the following official personas:
+
+1.  **Persona Type A (e.g., End Customer):**
+    -   *Profile:* A regular user seeking to resolve their pain.
+    -   *Tone of voice:* Friendly, simple, jargon-free, welcoming.
+    -   *Ideal interface:* Clean screens, large buttons, direct actions, and minimal typing.
+2.  **Persona Type B (e.g., Administrator/Partner):**
+    -   *Profile:* A professional user managing the platform.
+    -   *Tone of voice:* Efficient, corporate, precise, direct.
+    -   *Ideal interface:* Data panels (dashboards), reports, filters, and robust tables.
 
 ---
 
-## 🛠️ Como Personalizar este Arquivo
+## 🚫 3. Critical Business Rule Limits (Locks)
 
-Substitua os textos entre colchetes (`[...]`) com as regras reais da sua startup, aplicativo ou site. A clareza deste arquivo guiará o **PM Agent** na escrita de Critérios de Aceitação perfeitos e impedirá que o **Dev Agent** tome decisões que violem o modelo de negócios da sua empresa.
+These rules prevent the AI from creating absurd or insecure logical flows:
+-   **Premium Access Lock:** Non-subscriber users (`tier: 'free'`) must never have access to [Feature X]. The subscription check must be performed on the client AND rigorously validated on the backend.
+-   **Minimum Data Collection (Data Privacy):** Never request personal data that is not strictly necessary for the feature to function. Avoid forms with more than 4 fields during the initial onboarding.
+-   **Offline Behavior:** The product must be designed to handle internet outages gracefully. Always display loading placeholders (skeletons) or friendly error messages, preventing blank screens or freezes.
+
+---
+
+## 🛠️ How to Customize This File
+
+Replace the text inside brackets (`[...]`) with the real rules of your startup, application, or website. The clarity of this file will guide the **PM Agent** in writing perfect Acceptance Criteria and will prevent the **Dev Agent** from making decisions that violate your company's business model.

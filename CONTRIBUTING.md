@@ -12,6 +12,21 @@ Gigio Flow is an open-source workspace protocol and local Studio for Codex-power
 - harden Linear, GitHub, or Vercel integration behavior
 - improve local setup reliability
 - add security checks around filesystem and token handling
+- **add a new agent persona** — follow the guide at [docs/ADDING_NEW_AGENTS.md](docs/ADDING_NEW_AGENTS.md)
+
+## Adding New Agent Personas
+
+Gigio Flow is built to be extended with new squad members. A new agent could be a Security Auditor, Data Analyst, Accessibility Reviewer, Legal Risk Agent, or any specialist your team needs.
+
+Every agent persona is a single Markdown file in `.ai/squads/`. The file defines the agent's identity, what it reads, what it produces, and its hard limits.
+
+See the complete guide: [docs/ADDING_NEW_AGENTS.md](docs/ADDING_NEW_AGENTS.md)
+
+The minimum requirements for a new agent PR:
+- Agent file follows the standard template from the guide
+- Agent is registered in `AGENTS.md`, `CLAUDE.md`, and `README.md`
+- `knowledge/ESTADO_ATUAL.md` and `knowledge/HISTORICO.md` are updated
+- At least one real test scenario is described in the PR body
 
 ## Working Principles
 

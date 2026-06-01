@@ -1,59 +1,59 @@
-# Skill: Refinamento de Backlog por IA (LLM Refinement) — {{NOME_DO_PROJETO}}
+# Skill: AI Backlog Refinement (LLM Refinement) — {{NOME_DO_PROJETO}}
 
-> Esta skill descreve a prática recomendada de faturamento e refinamento de tarefas projetada sob medida para agentes de Inteligência Artificial, substituindo estimativas tradicionais de story points humanos.
-
----
-
-## 🧠 A Premissa: Por que Story Points não funcionam para IAs?
-
-Modelos de linguagem (LLMs) não têm noção de "horas humanas de trabalho" ou "velocidade de sprint". A capacidade de uma IA executar uma tarefa com sucesso e sem erros de regressão depende essencialmente de três fatores:
-
-1.  **Tamanho do Contexto:** Quantos arquivos ela precisa ler e modificar ao mesmo tempo.
-2.  **Ambiguidades:** O quão detalhados, lógicos e testáveis são os Critérios de Aceite na issue.
-3.  **Escopo da Edição:** Tarefas que envolvem muitas modificações paralelas em diferentes camadas (banco de dados, rotas de API, store global de estado, interface de usuário) geram alta probabilidade de alucinação de código e esquecimento de metadados.
-
-Portanto, o refinamento no **Gigio Flow** mede a complexidade baseado na **Atomicidade da Sessão de IA**.
+> This skill describes the recommended billing and task refinement practice designed specifically for Artificial Intelligence agents, replacing traditional human story point estimates.
 
 ---
 
-## 📏 A Regra de Ouro: Atomicidade de Sessão
+## 🧠 The Premise: Why Don't Story Points Work for AI?
 
-> **Uma tarefa está refinada de forma excelente quando pode ser completamente implementada, testada estaticamente e aprovada pelo QA em uma única conversa (sessão), sem estourar o limite de contexto da IA.**
+Language models (LLMs) have no concept of "human work hours" or "sprint velocity." An AI's ability to execute a task successfully and without regression errors depends essentially on three factors:
 
-### Limites para Fatiamento de Tarefas (Split Thresholds)
+1.  **Context Size:** How many files it needs to read and modify simultaneously.
+2.  **Ambiguities:** How detailed, logical, and testable the Acceptance Criteria in the issue are.
+3.  **Edit Scope:** Tasks involving many parallel modifications across different layers (database, API routes, global state store, user interface) generate a high probability of code hallucination and metadata forgetting.
 
-O PM Agent e o CTO Agent devem obrigatoriamente desmembrar uma proposta de funcionalidade em tarefas menores e atômicas se ela violar qualquer um dos seguintes limites:
-
--   **Limite de Arquivos Modificados:** A tarefa exige alterar mais do que **3 arquivos de código** simultaneamente (excluindo arquivos de configuração como `package.json`, `pnpm-lock.yaml` ou `CLAUDE.md`).
--   **Limite de Responsabilidade (Database vs UI):** A tarefa envolve alterar o banco de dados (schemas, RLS, migrations) E a interface visual (CSS, HTML, React, etc.).
-    -   *Como fatiar:* Divida em sub-tasks ordenadas:
-        1.  `TASK-A` (Backend: Criar Tabela/Campos/Migration e Políticas de Segurança).
-        2.  `TASK-B` (Integração: Conectar API, gerenciar estados globais e stores).
-        3.  `TASK-C` (UI: Telas visuais, navegação, responsividade e acessibilidade).
--   **Limite de Integrações Externas:** Alterações que mexem com chaves de API e fluxos de pagamentos ou gateways de terceiros (ex: Stripe, RevenueCat, gateways locais) devem ser totalmente isoladas de implementações visuais cosméticas.
+Therefore, refinement in **Gigio Flow** measures complexity based on **AI Session Atomicity**.
 
 ---
 
-## 📊 Classificação de Complexidade de Contexto
+## 📏 The Golden Rule: Session Atomicity
 
-Em vez de pontos (1, 2, 3, 5, 8), as tarefas serão classificadas por **Grau de Esforço de Contexto**:
+> **A task is excellently refined when it can be fully implemented, statically tested, and approved by QA in a single conversation (session), without exceeding the AI's context limit.**
 
-| Classificação | Impacto em Arquivos | Risco de Regressão | Tipo de Teste Exigido |
+### Split Thresholds for Task Slicing
+
+The PM Agent and CTO Agent must mandatorily break down a feature proposal into smaller, atomic tasks if it violates any of the following limits:
+
+-   **Modified Files Limit:** The task requires changing more than **3 code files** simultaneously (excluding configuration files such as `package.json`, `pnpm-lock.yaml`, or `CLAUDE.md`).
+-   **Responsibility Limit (Database vs UI):** The task involves modifying the database (schemas, RLS, migrations) AND the visual interface (CSS, HTML, React, etc.).
+    -   *How to slice:* Divide into ordered sub-tasks:
+        1.  `TASK-A` (Backend: Create Table/Fields/Migration and Security Policies).
+        2.  `TASK-B` (Integration: Connect API, manage global states and stores).
+        3.  `TASK-C` (UI: Visual screens, navigation, responsiveness and accessibility).
+-   **External Integrations Limit:** Changes involving API keys and payment flows or third-party gateways (e.g., Stripe, RevenueCat, local gateways) must be fully isolated from cosmetic visual implementations.
+
+---
+
+## 📊 Context Complexity Classification
+
+Instead of points (1, 2, 3, 5, 8), tasks are classified by **Context Effort Level**:
+
+| Classification | File Impact | Regression Risk | Required Test Type |
 | :--- | :--- | :--- | :--- |
-| **Fácil (Low)** | 1 arquivo | Baixo | Teste de renderização visual básico |
-| **Médio (Medium)** | 1 a 2 arquivos | Médio | Teste de fluxo completo (Golden Path) |
-| **Complexo (High)** | 2 a 3 arquivos | Alto | Teste offline + simulação de falha de conexão |
-| **Crítico (Critical)** | Mexe com RLS, Pagamentos ou Autenticação | Altíssimo | Auditoria de segurança + Logs LGPD + Teste em ambiente de Staging |
+| **Easy (Low)** | 1 file | Low | Basic visual rendering test |
+| **Medium** | 1 to 2 files | Medium | Full flow test (Golden Path) |
+| **Complex (High)** | 2 to 3 files | High | Offline test + connection failure simulation |
+| **Critical** | Touches RLS, Payments, or Authentication | Very High | Security audit + Data Privacy logs + Staging environment test |
 
 ---
 
-## 📋 Checklist de Refinamento (Definition of Ready)
+## 📋 Refinement Checklist (Definition of Ready)
 
-Antes de mover uma tarefa da pasta `workflows/propostas/` para `workflows/pendentes/` (sinalizando que está pronta para o Dev Agent iniciar), o PM e o CTO devem assinar o seguinte checklist de refinamento:
+Before moving a task from the `workflows/propostas/` folder to `workflows/pendentes/` (signaling it is ready for the Dev Agent to start), the PM and CTO must sign off on the following refinement checklist:
 
--   [ ] **Critérios Atômicos:** Os critérios de aceitação descrevem comportamentos únicos e facilmente verificáveis de ponta a ponta?
--   [ ] **Mapeamento de Arquivos:** Os arquivos exatos que serão modificados foram identificados e listados na issue?
--   [ ] **Métricas Definidas:** A issue especifica qual log deve ser gerado ou qual métrica de analytics deve ser impactada?
--   [ ] **Dependências Declaradas:** Ficou claro se essa tarefa depende de chaves de API externas ou de outras issues concluídas?
--   [ ] **Trava de Design:** Há referência visual (Figma link, layout system ou tokens de design) para que a IA não invente estilos?
--   [ ] **Registro no Kanban:** As tarefas foram obrigatoriamente lançadas na coluna de Backlog do Kanban board correto na pasta `boards/`?
+-   [ ] **Atomic Criteria:** Do the acceptance criteria describe single, easily verifiable end-to-end behaviors?
+-   [ ] **File Mapping:** Have the exact files to be modified been identified and listed in the issue?
+-   [ ] **Defined Metrics:** Does the issue specify which log should be generated or which analytics metric should be impacted?
+-   [ ] **Declared Dependencies:** Is it clear whether this task depends on external API keys or other completed issues?
+-   [ ] **Design Lock:** Is there a visual reference (Figma link, layout system, or design tokens) so the AI does not invent styles?
+-   [ ] **Kanban Registration:** Have the tasks been mandatorily added to the Backlog column of the correct Kanban board in the `boards/` folder?

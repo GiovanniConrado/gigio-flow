@@ -1,41 +1,41 @@
-# Regras de Travas de Segurança (Safety Locks) — {{NOME_DO_PROJETO}}
+# Safety Lock Rules — {{NOME_DO_PROJETO}}
 
-> Estas regras são imutáveis e de cumprimento obrigatório para QUALQUER sessão autônoma de desenvolvimento (Dev Agent) ou planejamento técnico (CTO Agent).
-
----
-
-## 🎨 1. Trava de Design (Design Lock — No Ad-hoc Styles)
-
-Para garantir que a identidade visual premium, consistente e de alta fidelidade do produto nunca seja corrompida por implementações descuidadas ou arbitrárias:
--   **Uso estrito de tokens:** Todas as cores, fontes, margens, paddings, cantos arredondados, pesos tipográficos e sombras DEVEM ser importados diretamente do Design System central do projeto (caminho definido em `knowledge/DESIGN_SYSTEM.md`).
--   **Proibido estilos ad-hoc (hardcoded):** É terminantemente proibido usar valores absolutos de estilo em componentes visuais, tais como:
-    -   Cores em formato Hexadecimal ou RGB manuais (`color: '#FF0055'`, `backgroundColor: 'rgba(0,0,0,0.5)'`). Use os tokens de tema oficiais (`theme.colors.[token]` ou equivalentes da sua stack CSS/Tailwind).
-    -   Margens, paddings, alturas e larguras em números "mágicos" aleatórios (`margin: 17`, `paddingHorizontal: 23`). Use os multiplicadores de espaçamento do tema (`theme.spacing.[token]`).
--   **Responsividade Integrada:** Todo componente de tela deve estar preparado para se adaptar a diferentes tamanhos de tela. Evite travar larguras e alturas fixas (`width: 375px`) onde layouts fluidos, flexbox ou grid seriam mais adequados.
--   **Acessibilidade Inegociável:** Todo componente interativo (botão, link, menu) deve conter obrigatoriamente tags ou propriedades de acessibilidade adequadas à plataforma (ex: `accessibilityLabel`, `accessibilityRole`, tags `aria-*` para web).
+> These rules are immutable and mandatory for ANY autonomous development session (Dev Agent) or technical planning (CTO Agent).
 
 ---
 
-## 🚫 2. Bloqueio de Scope Creep (Creative Creep Lock — No Creative Creep)
+## 🎨 1. Design Lock (No Ad-hoc Styles)
 
-Os agentes de IA às vezes tentam ser "criativos" ou adicionar pequenos recursos úteis que não foram explicitamente solicitados na especificação original. No Gigio Flow, isso é considerado um **risco grave de regressão**.
--   **Foco estrito na issue:** O Dev Agent deve implementar **apenas e tão somente** o que está detalhado nos Critérios de Aceitação da tarefa (issue).
--   **Proibido "Código Bônus":** Não adicione botões adicionais, novas rotas de navegação, interações visuais não solicitadas ou configurações adicionais baseadas em suposições próprias.
--   **Caminho para Melhorias:** Se identificar uma oportunidade real de melhoria visual ou de regra de produto durante o desenvolvimento, o Dev Agent deve reportar isso ao **Process Analyst** ou criar um novo arquivo markdown na pasta `workflows/propostas/` como sugestão. Ele **nunca** deve implementá-la de surpresa no código da issue atual.
-
----
-
-## 🛡️ 3. Integridade de Tipos (Static Typing Lock)
-
-Compilação livre de erros e tipagem estática robusta garantem a estabilidade de longo prazo de qualquer codebase:
--   **Proibido usar `any`:** O uso de `any` para escapar ou calar avisos do compilador é estritamente proibido. Tipos devem ser explícitos e interfaces compartilhadas de domínio devem ser documentadas.
--   **Validação estática obrigatória:** Antes de mover a tarefa para a homologação do QA, o Dev Agent deve rodar a checagem de tipos estática na raiz do projeto (ex: `npm run tsc -- --noEmit` para TypeScript). Se houver qualquer erro de compilação, o handoff para o QA é **automaticamente bloqueado**.
+To ensure that the product's premium, consistent, and high-fidelity visual identity is never corrupted by careless or arbitrary implementations:
+-   **Strict token usage:** All colors, fonts, margins, paddings, rounded corners, typographic weights, and shadows MUST be imported directly from the project's central Design System (path defined in `knowledge/DESIGN_SYSTEM.md`).
+-   **No ad-hoc (hardcoded) styles:** It is strictly forbidden to use absolute style values in visual components, such as:
+    -   Colors in manual Hexadecimal or RGB format (`color: '#FF0055'`, `backgroundColor: 'rgba(0,0,0,0.5)'`). Use the official theme tokens (`theme.colors.[token]` or your CSS/Tailwind stack equivalents).
+    -   Margins, paddings, heights, and widths as random "magic numbers" (`margin: 17`, `paddingHorizontal: 23`). Use the theme's spacing multipliers (`theme.spacing.[token]`).
+-   **Integrated Responsiveness:** Every screen component must be prepared to adapt to different screen sizes. Avoid locking fixed widths and heights (`width: 375px`) where fluid layouts, flexbox, or grid would be more appropriate.
+-   **Non-Negotiable Accessibility:** Every interactive component (button, link, menu) must mandatorily contain accessibility tags or properties appropriate for the platform (e.g., `accessibilityLabel`, `accessibilityRole`, `aria-*` tags for web).
 
 ---
 
-## 🗄️ 4. Retrocompatibilidade de Banco de Dados e APIs (API Lock)
+## 🚫 2. Scope Creep Block (Creative Creep Lock — No Creative Creep)
 
-Alterações em bancos de dados e contratos de APIs não podem quebrar ambientes de produção ativos ou versões antigas do app/site que estejam rodando em cache nos clientes.
--   **Migrações apenas aditivas:** É proibido deletar tabelas, renomear colunas em uso ou alterar tipos de colunas existentes que estejam em uso por versões anteriores em produção.
--   **Novos campos com valores padrão:** Ao adicionar novos campos obrigatórios (`NOT NULL`), garanta que eles tenham valores padrões (`DEFAULT`) definidos para evitar falhas de gravação em cadastros antigos.
--   **Auditoria de Acesso:** Nenhuma tabela nova ou rota de API modificada pode ir ao ar sem um parecer explícito do CTO e do QA Agent validando as políticas de acesso.
+AI agents sometimes try to be "creative" or add small useful features that were not explicitly requested in the original specification. In Gigio Flow, this is considered a **serious regression risk**.
+-   **Strict focus on the issue:** The Dev Agent must implement **only and exactly** what is detailed in the task's Acceptance Criteria (issue).
+-   **No "Bonus Code":** Do not add extra buttons, new navigation routes, unsolicited visual interactions, or additional configurations based on your own assumptions.
+-   **Path for Improvements:** If a real opportunity for a visual improvement or product rule is identified during development, the Dev Agent must report it to the **Process Analyst** or create a new markdown file in the `workflows/propostas/` folder as a suggestion. It must **never** be implemented as a surprise in the current issue's code.
+
+---
+
+## 🛡️ 3. Type Integrity (Static Typing Lock)
+
+Error-free compilation and robust static typing ensure the long-term stability of any codebase:
+-   **No `any` allowed:** The use of `any` to escape or silence compiler warnings is strictly prohibited. Types must be explicit and shared domain interfaces must be documented.
+-   **Mandatory static validation:** Before moving the task to QA review, the Dev Agent must run the static type check at the project root (e.g., `npm run tsc -- --noEmit` for TypeScript). If there are any compilation errors, the handoff to QA is **automatically blocked**.
+
+---
+
+## 🗄️ 4. Database and API Backward Compatibility (API Lock)
+
+Changes to databases and API contracts must not break active production environments or older versions of the app/site running in client caches.
+-   **Additive migrations only:** It is forbidden to delete tables, rename in-use columns, or alter the types of existing columns that are in use by previous versions in production.
+-   **New fields with default values:** When adding new mandatory fields (`NOT NULL`), ensure they have defined default values (`DEFAULT`) to prevent write failures in existing records.
+-   **Access Audit:** No new table or modified API route can go live without an explicit sign-off from the CTO and the QA Agent validating the access policies.

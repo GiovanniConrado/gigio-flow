@@ -1,58 +1,58 @@
-# Glossário de Termos — Gigio Flow
+# Glossary of Terms — Gigio Flow
 
-> Dicionário de termos específicos do domínio Gigio Flow. A IA usa este glossário para garantir consistência semântica em toda a documentação, código e comunicação.
+> Dictionary of Gigio Flow domain-specific terms. The AI uses this glossary to ensure semantic consistency across all documentation, code, and communication.
 
 ---
 
-## Termos Fundamentais
+## Fundamental Terms
 
 **Workspace**
-: Uma pasta raiz de projeto que segue a estrutura do Gigio Flow (contém `.ai/`, `knowledge/`, `workflows/`, `boards/`). Um workspace representa um projeto, produto ou startup.
+: A project root folder that follows the Gigio Flow structure (contains `.ai/`, `knowledge/`, `workflows/`, `boards/`). A workspace represents a project, product, or startup.
 
 **Squad**
-: Uma persona de IA especializada com identidade, responsabilidades e regras inegociáveis definidas em `.ai/squads/`. Cada squad atua como um papel específico em uma equipe de produto: CEO, PM, CTO, Dev, QA, Process Analyst.
+: A specialized AI persona with identity, responsibilities, and non-negotiable rules defined in `.ai/squads/`. Each squad acts as a specific role in a product team: CEO, PM, CTO, Dev, QA, Process Analyst.
 
 **Studio**
-: O painel visual local (dashboard/) que serve como interface de configuração, visualização e controle do workspace Gigio Flow. Roda em `http://localhost:5173` (frontend) e `http://localhost:3001` (backend).
+: The local visual panel (dashboard/) that serves as the configuration, visualization, and control interface of the Gigio Flow workspace. Runs at `http://localhost:5173` (frontend) and `http://localhost:3001` (backend).
 
-**Pipeline de Entrega**
-: O fluxo sequencial de uma tarefa desde a ideação até a produção: Proposta → Refinamento LLM → Estimativa → Aprovação Humana → Execução → QA Técnico → QA Humano → Linear → Concluído.
+**Delivery Pipeline**
+: The sequential flow of a task from ideation to production: Proposal → LLM Refinement → Estimation → Human Approval → Execution → Technical QA → Human QA → Linear → Done.
 
-**Knowledge Base (Base de Conhecimento)**
-: A pasta `knowledge/` contendo os 7 documentos fundamentais do projeto: VISAO, ARQUITETURA, ESTADO_ATUAL, ROADMAP, HISTORICO, GLOSSARIO, DESIGN_SYSTEM. É a memória persistente do projeto.
+**Knowledge Base**
+: The `knowledge/` folder containing the 7 fundamental project documents: VISAO, ARQUITETURA, ESTADO_ATUAL, ROADMAP, HISTORICO, GLOSSARIO, DESIGN_SYSTEM. It is the project's persistent memory.
 
-**Ritual de Sessão**
-: Protocolo obrigatório que a IA segue ao iniciar (`knowledge/ESTADO_ATUAL.md` → tarefas pendentes → proposta) e ao encerrar (atualiza ESTADO_ATUAL → registra em HISTORICO → move card).
+**Session Ritual**
+: Mandatory protocol the AI follows at startup (`knowledge/ESTADO_ATUAL.md` → pending tasks → proposal) and at close (update ESTADO_ATUAL → record in HISTORICO → move card).
 
-**Auto-Evolução**
-: A skill que instrui a IA a atualizar autonomamente os arquivos de conhecimento após cada entrega, garantindo que o workspace seja sempre a Fonte da Verdade atualizada.
+**Self-Evolution**
+: The skill that instructs the AI to autonomously update the knowledge files after each delivery, ensuring the workspace is always the up-to-date Source of Truth.
 
 **Safety Lock**
-: Uma regra imutável em `.ai/rules/safety-locks.md` que bloqueia comportamentos indesejados da IA: estilos ad-hoc, scope creep, uso de `any` em TypeScript, mudanças destrutivas em banco de dados.
+: An immutable rule in `.ai/rules/safety-locks.md` that blocks undesired AI behaviors: ad-hoc styles, scope creep, use of `any` in TypeScript, destructive database changes.
 
 **Design Lock**
-: A regra específica que proíbe a IA de usar valores de estilo hardcoded (cores em hex, margins mágicas). Todo estilo deve vir dos tokens do `DESIGN_SYSTEM.md`.
+: The specific rule that prohibits the AI from using hardcoded style values (hex colors, magic margins). All styles must come from the tokens in `DESIGN_SYSTEM.md`.
 
-**Parecer de Viabilidade Estratégica**
-: O documento estruturado que o CEO Agent gera ao analisar uma nova ideia. Contém: Tese de Valor, Custo vs. Impacto, Riscos Mapeados e Veredito (Prosseguir/Modificar/Engavetar).
+**Strategic Viability Assessment**
+: The structured document that the CEO Agent generates when analyzing a new idea. Contains: Value Thesis, Cost vs. Impact, Mapped Risks, and Verdict (Proceed/Modify/Shelve).
 
 **Card**
-: Um arquivo Markdown dentro de uma das pastas de workflow (`propostas/`, `pendentes/`, `em-progresso/`) representando uma tarefa ou especificação.
+: A Markdown file within one of the workflow folders (`propostas/`, `pendentes/`, `em-progresso/`) representing a task or specification.
 
-**Esteira de Entrega**
-: O conjunto das pastas de workflow (`workflows/`) que formam o Kanban físico local: propostas → pendentes → em-progresso → concluídos (`.ai/history/concluidos/`).
+**Delivery Pipeline (physical)**
+: The set of workflow folders (`workflows/`) that form the local physical Kanban: propostas → pendentes → em-progresso → concluídos (`.ai/history/concluidos/`).
 
 **PRD (Product Requirements Document)**
-: O documento de especificação funcional de uma feature ou tarefa. Criado pelo PM Agent usando o template em `.ai/templates/prd.md`.
+: The functional specification document for a feature or task. Created by the PM Agent using the template at `.ai/templates/prd.md`.
 
 **Story Points**
-: Unidade de medida de complexidade de uma tarefa, estimada pelo CTO Agent com base na análise do escopo técnico, arquivos impactados e risco de regressão.
+: Unit of measurement for task complexity, estimated by the CTO Agent based on analysis of the technical scope, impacted files, and regression risk.
 
-**Refinamento LLM**
-: O processo de enriquecer uma PRD bruta com critérios de aceite atômicos, dependências técnicas e riscos, usando o contexto completo do sistema como input para a LLM.
+**LLM Refinement**
+: The process of enriching a raw PRD with atomic acceptance criteria, technical dependencies, and risks, using the full system context as input for the LLM.
 
-**Gate de Aprovação**
-: Ponto de checkagem humana no pipeline onde o fundador/PM valida se a proposta ou o resultado da QA pode avançar para a próxima etapa.
+**Approval Gate**
+: A human checkpoint in the pipeline where the founder/PM validates whether the proposal or QA result can advance to the next stage.
 
 **Dogfooding**
-: Prática de usar o próprio Gigio Flow para gerenciar o desenvolvimento do Gigio Flow. O workspace em `c:\Users\conra\Desktop\gigio-flow` é o caso de uso real do produto.
+: The practice of using Gigio Flow itself to manage the development of Gigio Flow. The workspace at `c:\Users\conra\Desktop\gigio-flow` is the real-world use case of the product.
