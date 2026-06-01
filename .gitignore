@@ -34,6 +34,7 @@ pnpm-debug.log*
 Thumbs.db
 .idea/
 .vscode/
+.obsidian/
 
 # Private keys
 *.pem
