@@ -65,15 +65,16 @@ export function buildSystemContext(workspaceDir) {
 }
 
 /**
- * Chama a LLM configurada (Gemini ou OpenAI) e retorna a resposta como string.
+ * Chama a LLM configurada (Gemini, OpenAI ou DeepSeek) e retorna a resposta como string.
  * @param {Object} params
- * @param {'gemini'|'openai'} params.provider
+ * @param {'gemini'|'openai'|'deepseek'} params.provider
  * @param {string} params.apiKey
  * @param {string} params.systemPrompt
  * @param {string} params.userPrompt
+ * @param {string} [params.model] - Model override (defaults per provider)
  * @returns {Promise<string>}
  */
-export async function callLLM({ provider, apiKey, systemPrompt, userPrompt }) {
+export async function callLLM({ provider, apiKey, systemPrompt, userPrompt, model }) {
   if (!apiKey) throw new Error('API Key é obrigatória para chamar a LLM.');
 
   if (provider === 'openai') {
@@ -81,7 +82,7 @@ export async function callLLM({ provider, apiKey, systemPrompt, userPrompt }) {
     const url = 'https://api.openai.com/v1/chat/completions';
     const headers = { 'Authorization': `Bearer ${apiKey}` };
     const body = {
-      model: 'gpt-4o-mini',
+      model: model || 'gpt-4o-mini',
       messages: [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userPrompt }
@@ -96,10 +97,34 @@ export async function callLLM({ provider, apiKey, systemPrompt, userPrompt }) {
     const data = JSON.parse(result.body);
     return data.choices[0].message.content;
 
+  } else if (provider === 'deepseek') {
+    console.log('[LLM Engine] Enviando requisição para DeepSeek API...');
+    const url = 'https://api.deepseek.com/v1/chat/completions';
+    const headers = { 'Authorization': `Bearer ${apiKey}` };
+    const body = {
+      model: model || 'deepseek-chat',
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userPrompt }
+      ],
+      temperature: 0.7,
+      max_tokens: 4096
+    };
+
+    const result = await makeHttpsPost(url, headers, body);
+    if (result.statusCode !== 200) {
+      throw new Error(`DeepSeek API erro status ${result.statusCode}: ${result.body}`);
+    }
+    const data = JSON.parse(result.body);
+    if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+      throw new Error(`Resposta inesperada da DeepSeek API: ${JSON.stringify(data).substring(0, 200)}`);
+    }
+    return data.choices[0].message.content;
+
   } else {
     // Default: Gemini
     console.log('[LLM Engine] Enviando requisição para Gemini API...');
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model || 'gemini-2.5-flash'}:generateContent?key=${apiKey}`;
     const body = {
       contents: [
         {

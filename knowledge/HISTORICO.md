@@ -4,7 +4,35 @@
 
 ---
 
-### [2026-06-01] — Automated Test Suite with Vitest and Supertest
+### [2026-06-15] - Operational Contract v1
+- **What changed:** Created `.ai/WORKFLOW_CONTRACT.md`, `.ai/templates/task.md`, and `.ai/templates/evidence-comment.md`; updated AGENTS.md and key skills to point to the central workflow contract.
+- **Context & Motivation:** Process audit found drift risk between session rituals, removed `workflows/em-progresso/`, Linear-as-source-of-truth, and duplicated skill instructions. The new contract makes status, evidence, authorship, QA layers, proportional workflow, and session closeout explicit.
+- **System Impact:** Future agents should start from one workflow contract, add evidence before moving statuses, separate QA-Tecnica from QA-Funcional, and distinguish technically ready from production ready.
+
+---
+
+### [2026-06-15] - Operational diagnostics and Linear status map
+- **What changed:** Added `.ai/linear-status-map.json` and expanded Studio diagnostics to check workflow-contract coverage, legacy references, and missing official Linear status mappings.
+- **Context & Motivation:** A written contract alone still leaves room for silent drift. The monitor now helps detect when docs and skills stop reflecting the real operating model.
+- **System Impact:** `dashboard/routes/system.js` and `dashboard/src/components/Monitor.jsx` now expose operational health signals, while walkthrough and workflow docs were aligned with the Linear-first flow.
+
+---
+
+### [2026-06-06] — Skills v2 + MCP Linear + DeepSeek
+- **What changed:** Created 4 operational skills (prd-to-linear, dev-cycle, retrospective, bootstrap), MCP server for Linear with 7 tools, DeepSeek LLM provider, PRD→issues route, project bootstrap route.
+- **Context & Motivation:** Need for structured, repeatable, IDE-agnostic dev flow with Linear as operational source.
+- **System Impact:** New: `.ai/skills/prd-to-linear.md`, `.ai/skills/dev-cycle.md`, `.ai/skills/retrospective.md`, `.ai/skills/bootstrap-project.md`, `dashboard/mcp-linear.js`, `.opencode/mcp.json`. Modified: `services/llm.js`, `routes/workflow.js`, `routes/system.js`, `PipelineView.jsx`, `AGENTS.md`.
+
+---
+
+### [2026-06-06] — Studio V5 Repositioned: Knowledge + AI Console
+- **What changed:** Complete repositioning of the Studio. Removed KanbanBoard (replaced by Linear as visual board). New navigation: Overview, Knowledge, AI Console, Config, Diagnostics. Created 3 new components (Overview, KnowledgeEditor, AiConsole). Simplified PipelineView to 3 AI actions. Root cleanup: removed `.obsidian/`, `boards/`, `CLAUDE.md`, `ROADMAP.md`, `CHANGELOG.md`, `workflows/em-progresso/`. New README as main manual.
+- **Context & Motivation:** Studio was trying to be a mini-Linear and failing. Linear is the operational source of truth. Studio now focuses on what Linear cannot do: knowledge management, AI pipeline (refine/estimate/QA), CEO ideation, diagnostics, bootstrap.
+- **System Impact:** New: `Overview.jsx`, `KnowledgeEditor.jsx`, `AiConsole.jsx`. Removed: `KanbanBoard.jsx`, `boards/`, `.obsidian/`, `CLAUDE.md`, `ROADMAP.md`, `CHANGELOG.md`, `workflows/em-progresso/`. Modified: `App.jsx`, `Sidebar.jsx`, `PipelineView.jsx`, `routes/system.js` (+knowledge endpoints), `README.md`, `AGENTS.md`, `knowledge/`.
+
+
+
+---### [2026-06-01] — Automated Test Suite with Vitest and Supertest
 - **What changed:** Implementation of 25 automated unit and integration tests covering disk I/O security against Path Traversal, local Kanban routes, advanced LLM pipeline simulations (refine, estimate, qa-review), and Linear webhooks/APIs.
 - **Context & Motivation:** Technical preparation of the repository for OpenAI's Codex for Open Source program. The absence of automated tests was the main technical bottleneck for approval in open-source excellence programs.
 - **System Impact:** Installation of `vitest` and `supertest` in the Studio development environment. Creation of the `dashboard/tests/` folder containing 100% isolated tests that run offline, fast (680ms), and without modifying real production files of the user.

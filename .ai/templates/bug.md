@@ -1,19 +1,22 @@
-# 🐛 Bug — [Short Problem Title]
+# Bug - [Short Problem Title]
 
 > **Author:** [Author Name / QA]
 > **Date:** [YYYY-MM-DD]
-> **Status:** ⏳ Pending / 🏃 In Progress / ✅ Fixed
+> **Status:** Backlog / Todo / Desenvolvimento / QA-Tecnica / QA-Funcional / Concluido / Em-Producao
 > **Priority:** [High / Medium / Low]
 > **Issue ID:** [GIG-XX]
+> **Operational Contract:** `.ai/WORKFLOW_CONTRACT.md`
 
 ---
 
-## 🔍 Bug Description
-[Describe clearly and objectively the incorrect behavior that is happening in the system.]
+## Bug Description
+
+[Describe clearly and objectively the incorrect behavior happening in the system.]
 
 ---
 
-## 👣 Steps to Reproduce
+## Steps to Reproduce
+
 1. [Go to screen X]
 2. [Click button Y]
 3. [Type value Z in the field]
@@ -21,13 +24,15 @@
 
 ---
 
-## 📊 Expected vs. Actual Behavior
+## Expected vs Actual Behavior
+
 - **Expected Behavior:** [What should happen correctly]
-- **Actual Behavior:** [What actually happened, e.g., freeze, error 500, visual break]
+- **Actual Behavior:** [What actually happened]
 
 ---
 
-## 💻 Evidence & Logs (Console/Sentry)
+## Evidence and Logs
+
 ```text
-[Paste console error messages, server logs, or screenshots here]
+[Paste console errors, server logs, or screenshots here]
 ```

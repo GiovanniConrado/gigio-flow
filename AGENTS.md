@@ -1,7 +1,38 @@
 # Gigio Flow — Context and Guidelines for AI
 
 > This file is loaded automatically by AI tools (such as Codex, Cursor, or compatible agents) at the start of every session.
-> Read all sections below before starting any work in this repository.
+
+---
+
+## ⚡ Quick Start (leia ANTES de qualquer ação)
+
+**O agente faz TUDO.** O painel visual (`http://localhost:5173`) é só um monitor de status.
+
+**Contrato operacional:** `.ai/WORKFLOW_CONTRACT.md` é a fonte viva do fluxo.
+Se houver conflito entre AGENTS.md, skills, templates ou histórico antigo, siga
+o contrato e depois corrija a instrução duplicada.
+
+### Comandos mais comuns
+
+| Comando do usuário | O que o agente faz |
+|---|---|
+| **"Mapeie o projeto em `<path>`"** | Chama `POST /api/project/bootstrap`, detecta stack, cria workspace, preenche knowledge |
+| **"Crie um workspace novo em `<path>` com `<stack>`"** | Cria estrutura `.ai/`, `knowledge/`, `workflows/`, pergunta missão, squads, Linear |
+| **"Configure o que está faltando"** | Lê `GET /api/workspace/status`, identifica arquivos vazios/placeholders, preenche um por um |
+| **"Crie uma PRD para `<título>`"** | Cria card em `workflows/propostas/` com template `.ai/templates/prd.md` |
+| **"Execute o skill `<nome>`"** | Lê `.ai/skills/<nome>.md` e segue as instruções passo a passo |
+| **"Crie issues no Linear"** | Executa `prd-to-linear.md` via MCP `linear_create_issue` |
+
+### Fluxo visual (monitor)
+
+```
+Studio → http://localhost:5173 → health score + arquivos + pipeline
+Linear → https://linear.app     → issues operacionais (Dev, QA, Deploy)
+```
+
+### Se algo está vermelho no monitor
+
+Pergunte ao agente: **"O que está faltando?"** ou **"Corrija os arquivos com placeholder"**.
 
 ---
 
@@ -22,10 +53,12 @@ gigio-flow/
 ├── .ai/                    ← AI brain and orchestration
 │   ├── squads/             ← AI personas (ceo.md, pm.md, cto.md, dev.md, qa.md, process-analyst.md)
 │   ├── rules/              ← Immutable rules for security, product, code, and deploy
-│   ├── skills/             ← AI operational skills and rituals
+│   ├── skills/             ← AI operational skills and rituals (8 skills)
 │   ├── templates/          ← Task templates (prd.md, feature, bug...)
 │   └── history/            ← Local history of tasks completed by AIs
 │       └── concluidos/     ← Finalized task files
+├── .opencode/              ← Opencode MCP config (Linear integration)
+│   └── mcp.json            ← MCP server config for Linear
 ├── knowledge/              ← Living Knowledge Base (Single Source of Truth) ← POPULATED
 │   ├── VISAO.md            ← Mission, business model, goals, and value of Gigio Flow
 │   ├── ARQUITETURA.md      ← Tech stack, modules, API contract
@@ -37,45 +70,63 @@ gigio-flow/
 ├── dashboard/              ← Gigio Flow Studio (frontend + local backend)
 │   ├── server.js           ← Express REST API
 │   ├── routes/             ← Route modules (projects, workflow, system, linear)
-│   ├── services/           ← Services (files.js with validatePath, llm.js with callLLM)
+│   ├── services/           ← Services (files.js, llm.js with DeepSeek/Gemini/OpenAI)
+│   ├── mcp-linear.js       ← MCP Server for Linear (standalone, any IDE can use)
 │   ├── src/                ← React 19 + Vite frontend
 │   │   ├── App.jsx         ← State orchestrator and tabs
-│   │   └── components/     ← Components (Sidebar, KanbanBoard, PipelineView, etc.)
-│   └── .env                ← Environment variables (PORT, LINEAR_*)
+│   │   └── components/     ← Components (Monitor, WorkspaceExplorer, PipelineProgress, etc.)
+│   └── .env                ← Environment variables (PORT, LINEAR_*, DEEPSEEK_*)
 ├── workflows/              ← Continuous delivery pipeline (local physical Kanban)
 │   ├── propostas/          ← PRDs awaiting refinement/approval
-│   ├── pendentes/          ← Approved tasks awaiting execution
-│   └── em-progresso/       ← Tasks under active development
-└── boards/                 ← Obsidian visual boards
+│   ├── pendentes/          ← Approved PRDs awaiting issue creation
+│   └── (active work lives in Linear; closed local records go to .ai/history/concluidos/)
+└── boards/                 ← Legacy/optional Obsidian boards, when present
 ```
 
 ---
 
 ## 🔄 The Delivery Flow (Full Pipeline)
 
-Gigio Flow uses a two-layer pipeline:
+Gigio Flow uses a two-layer pipeline with **Linear as the operational source of truth**.
 
-### Layer 1: Studio (Configuration and Pipeline)
 ```
-Ideation → CEO Agent analyzes → PRD created in workflows/propostas/
-                                      ↓
-                               Studio: Refine with LLM (full system context)
-                                      ↓
-                               Studio: Estimate Complexity (story points)
-                                      ↓
-                               Studio: Human Approval (gate)
-                                      ↓
-                               Studio: Create Issue in Linear
+PRD criado em workflows/propostas/
+       ↓
+[Studio] Refinamento LLM (refine)
+       ↓
+[Studio] Estimativa (estimate)
+       ↓
+[Studio] ▼ GATE 1: Humano aprova escopo
+       ↓
+[Agente via MCP] PRD → Issues atômicas criadas no Linear
+       ├── Usa skill .ai/skills/prd-to-linear.md
+       └── Cria issues via MCP linear_create_issue
+       ↓
+[Agente via MCP] Dev implementa cada issue
+       ├── Usa skill .ai/skills/dev-cycle.md
+       ├── Carrega contexto de knowledge/
+       ├── Commita com referência (ex: "GIG-42: ...")
+       └── Atualiza status no Linear via MCP
+       ↓
+[Studio] QA Técnico (LLM) revisa código
+       ↓
+[Studio] ▼ GATE 2: Humano aprova QA final
+       ↓
+[Agente via MCP] Deploy para desenvolvimento
+       ↓
+[Agente via MCP] Retrospectiva e auto-alimentação
+       ├── Usa skill .ai/skills/retrospective.md
+       └── Skills se auto-modificam para melhorar o próximo ciclo
 ```
 
-### Layer 2: Linear (Operational)
-```
-Issue created in Linear → Operational columns (Dev → Technical QA → Human QA → Done)
-                                      ↓ (when Done)
-                               Linear Webhook → Studio updates ESTADO_ATUAL.md
-                                      ↓
-                               Card moved to .ai/history/concluidos/
-```
+### Camadas
+
+| Camada | O que faz | Como acessa |
+|--------|-----------|-------------|
+| **Studio (dashboard/)** | Refinamento, estimativa, QA técnico, diagnóstico | REST API `localhost:3001` |
+| **MCP Linear (mcp-linear.js)** | Ponte direta entre IA e Linear | MCP Protocol via `.opencode/mcp.json` |
+| **Skills (.ai/skills/)** | Guiam o comportamento do agente em qualquer IDE | Lidos pelo agente na sessão |
+| **Linear** | Fonte da verdade operacional (colunas: Backlog → Todo → Desenvolvimento → QA-Tecnica → QA-Funcional → Concluido → Em-Producao) | API GraphQL |
 
 ---
 
@@ -113,17 +164,50 @@ Compliance priority (1 = most important):
 
 ---
 
+## 🎯 Available Skills
+
+Skills provide specialized instructions for each stage of the pipeline:
+
+| Skill | When to use |
+|-------|-------------|
+| `.ai/skills/prd-to-linear.md` | After PRD is approved — break it into Linear issues |
+| `.ai/skills/dev-cycle.md` | When picking up a Linear issue for implementation |
+| `.ai/skills/retrospective.md` | After deploy — review and improve the workflow |
+| `.ai/skills/bootstrap-project.md` | When mapping an existing project into Gigio Flow |
+| `.ai/skills/auto-evolucao.md` | Session close — update knowledge base |
+| `.ai/skills/llm-refinement.md` | Refinement methodology for AI tasks |
+| `.ai/skills/release-checklist.md` | Final QA checklist before deploy |
+
+## 🔧 MCP Linear Tools
+
+The MCP server (`dashboard/mcp-linear.js`) exposes these tools for any AI agent:
+
+| Tool | Purpose |
+|------|---------|
+| `linear_list_teams` | List teams |
+| `linear_list_states` | List workflow columns |
+| `linear_create_issue` | Create issue with title, description, priority |
+| `linear_get_issue` | Get issue details |
+| `linear_search_issues` | Search issues by query or state |
+| `linear_update_issue` | Update status, priority, assignee |
+| `linear_add_comment` | Add comment to issue |
+
+Configure in `.opencode/mcp.json` or your IDE's MCP settings.
+
 ## 📋 Mandatory Session Rituals
 
-### 🌅 Session Start (What to do first)
-1. Read `knowledge/ESTADO_ATUAL.md` — understand the current state of each module
-2. Read `workflows/pendentes/` — list prioritized tasks
-3. Read `workflows/em-progresso/` — check for blocked tasks
-4. Present a summary and propose the next highest-impact step
+Follow `.ai/WORKFLOW_CONTRACT.md`. It is the living operational contract for
+session start, official statuses, evidence comments, authorship labels, QA
+layers, proportional workflow, and session closeout.
 
-### 🌌 Session Close (When completing any task)
-1. Update `knowledge/ESTADO_ATUAL.md` with date and new developments
-2. Add an entry to `knowledge/HISTORICO.md` with the decision/milestone
-3. Move the card from `workflows/em-progresso/` to `.ai/history/concluidos/` with a `## Result` section
-4. If Linear integration is active: update the corresponding issue
-5. **Never close without registering** — no exceptions
+### Session Start
+1. Read `knowledge/ESTADO_ATUAL.md`
+2. Read recent `knowledge/HISTORICO.md`
+3. Read `.ai/WORKFLOW_CONTRACT.md`
+4. Confirm the user's focus before listing tasks, unless the user already gave a clear objective
+5. Then consult the relevant source: `workflows/propostas/`, `workflows/pendentes/`, or Linear
+
+### Session Close
+Use the checklist in `.ai/WORKFLOW_CONTRACT.md`: update current state/history
+when needed, add evidence before status moves, keep Linear/local records aligned,
+and separate technical readiness from production readiness.

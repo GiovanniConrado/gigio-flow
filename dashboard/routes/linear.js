@@ -312,5 +312,40 @@ export function createLinearRouter(state) {
     }
   });
 
+  // ── GET /api/linear/teams ─────────────────────────────────────────────
+  // Lista os times disponíveis no Linear (para o wizard de configuração)
+  router.get('/teams', async (req, res) => {
+    try {
+      const hasUsableApiKey = !!linearConfig.apiKey && linearConfig.apiKey !== '***CONFIGURADA***';
+      if (!hasUsableApiKey) {
+        return res.json({ teams: [], configured: false });
+      }
+      const data = await linearGraphQL(`query { teams { nodes { id name key } } }`);
+      res.json({ teams: data.teams.nodes, configured: true });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // ── GET /api/linear/states ────────────────────────────────────────────
+  // Lista os estados/workflow columns de um time
+  router.get('/states', async (req, res) => {
+    try {
+      const teamId = req.query.teamId || linearConfig.teamId;
+      if (!teamId) {
+        return res.status(400).json({ error: 'teamId é obrigatório' });
+      }
+      const data = await linearGraphQL(
+        `query ($teamId: String!) {
+          team(id: $teamId) { states { nodes { id name type color position } } }
+        }`,
+        { teamId }
+      );
+      res.json({ states: data.team.states.nodes });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   return router;
 }

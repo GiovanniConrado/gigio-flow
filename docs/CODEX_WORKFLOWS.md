@@ -8,15 +8,16 @@ At the start of a session, Codex should read:
 
 1. `AGENTS.md`
 2. `knowledge/ESTADO_ATUAL.md`
-3. `workflows/pendentes/`
-4. `workflows/em-progresso/`
+3. recent `knowledge/HISTORICO.md`
+4. `.ai/WORKFLOW_CONTRACT.md`
 5. the relevant squad file in `.ai/squads/`
+6. the relevant source for the current focus: `workflows/propostas/`, `workflows/pendentes/`, or Linear
 
 At the end of a completed task, Codex should update:
 
 1. `knowledge/ESTADO_ATUAL.md`
 2. `knowledge/HISTORICO.md`
-3. the completed workflow card with a `## Resultado` section
+3. the local PRD or task record when it changed
 4. the connected Linear issue, when configured
 
 ## Workflow 1: Idea to PRD

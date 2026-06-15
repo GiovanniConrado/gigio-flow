@@ -4,6 +4,7 @@
 > **Date:** [YYYY-MM-DD]
 > **Status:** ⏳ Under Review (Awaiting human approval with "OK")
 > **Issue ID:** [GIG-XX]
+> **Operational Contract:** `.ai/WORKFLOW_CONTRACT.md`
 
 ---
 
@@ -71,6 +72,10 @@
 ## 📋 5. Agile Task Slicing (Linear/GitHub/Obsidian)
 
 *Task breakdown following the AI Session Atomicity rule.*
+
+Every resulting task must include the required operational sections from
+`.ai/WORKFLOW_CONTRACT.md`: Contexto, Criterios de aceite, Refinamento
+operacional, and Como validar.
 
 ### 👥 PM Squad (Specifications & Copy)
 - **Title:** [PM] Detail copy and flows for [Feature]

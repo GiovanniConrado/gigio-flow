@@ -18,10 +18,10 @@ The Obsidian Kanban plugin uses metadata in HTML comment blocks and specific ord
     - [ ] [BLO-12] Create registration screen
     - [ ] [BLO-15] Adjust login button
 
-    ## 🏃 In Progress
+    ## 🏃 Desenvolvimento
     - [ ] [BLO-10] Integrate payment API
 
-    ## ✅ Done
+    ## ✅ Concluido
     - [x] [BLO-08] Landing Page Layout
     ```
 
@@ -31,8 +31,8 @@ The Obsidian Kanban plugin uses metadata in HTML comment blocks and specific ord
 
 Whenever an AI completes a task or moves its status:
 -   **Issue ID Preservation:** Never alter or delete the issue ID prefix (e.g., `[BLO-XX]`) contained in the card text.
--   **Completion Marking:** When moving a card to the **Done** column (or equivalent), change the checkbox from `- [ ]` to `- [x]` mandatorily.
--   **Avoid Duplications:** When moving a card from one column to another (e.g., `Backlog` ➔ `In Progress`), remove the corresponding line from the old column before inserting it in the new one. Never leave the same issue ID duplicated in two columns.
+-   **Completion Marking:** When moving a card to the **Concluido** column (or equivalent), change the checkbox from `- [ ]` to `- [x]` mandatorily.
+-   **Avoid Duplications:** When moving a card from one column to another (e.g., `Backlog` ➔ `Desenvolvimento`), remove the corresponding line from the old column before inserting it in the new one. Never leave the same issue ID duplicated in two columns.
 -   **Chronological / Priority Order:** Keep the most urgent and prioritized cards at the top of each column's list.
 
 ---

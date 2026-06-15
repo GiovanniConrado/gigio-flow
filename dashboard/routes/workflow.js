@@ -19,8 +19,14 @@
 import express from 'express';
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 import { fileExists, readFile, writeFile, validatePath } from '../services/files.js';
-import { callLLM, buildSystemContext } from '../services/llm.js';
+import { callLLM, buildSystemContext, makeHttpsPost } from '../services/llm.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname  = path.dirname(__filename);
+
+const LINEAR_CONFIG_FILE = path.join(__dirname, '..', 'linear-config.json');
 
 // ─── Fases válidas do workflow ───────────────────────────────────────────────
 const VALID_PHASES = ['propostas', 'pendentes', 'em-progresso'];
@@ -657,6 +663,211 @@ ${comment ? `\n**Comentário:** ${comment}` : ''}
 
       res.json({ success: true, movedTo: 'concluidos', ...completed });
     } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // ── Helper: Linear GraphQL (self-contained, reads config from env/file) ──────
+  async function linearGraphQL(query, variables = {}) {
+    let apiKey = process.env.LINEAR_API_KEY || '';
+    let teamId = process.env.LINEAR_TEAM_ID || '';
+
+    if (!apiKey) {
+      try {
+        if (fs.existsSync(LINEAR_CONFIG_FILE)) {
+          const cfg = JSON.parse(fs.readFileSync(LINEAR_CONFIG_FILE, 'utf8'));
+          if (cfg.apiKey && cfg.apiKey !== '***CONFIGURADA***') apiKey = cfg.apiKey;
+          if (cfg.teamId) teamId = cfg.teamId;
+        }
+      } catch {}
+    }
+
+    if (!apiKey) throw new Error('Linear API Key não configurada');
+    if (!teamId) throw new Error('Linear Team ID não configurado');
+
+    const result = await makeHttpsPost(
+      'https://api.linear.app/graphql',
+      { 'Authorization': apiKey },
+      { query, variables }
+    );
+
+    if (result.statusCode !== 200) {
+      throw new Error(`Linear API erro ${result.statusCode}: ${result.body}`);
+    }
+    const data = JSON.parse(result.body);
+    if (data.errors) throw new Error(`Linear GraphQL erro: ${JSON.stringify(data.errors)}`);
+    return data.data;
+  }
+
+  // ── POST /api/workflow/prd-to-issues ────────────────────────────────────
+  // Pega um PRD aprovado, quebra em issues atômicas usando LLM,
+  // cria cada issue no Linear e anota o card.
+  router.post('/prd-to-issues', async (req, res) => {
+    try {
+      const workspaceDir = state.activeWorkspaceDir;
+      const { cardId, phase, apiKey, provider } = req.body;
+
+      if (!cardId || !phase) {
+        return res.status(400).json({ error: 'cardId e phase são obrigatórios' });
+      }
+
+      // 1. Ler o card PRD
+      const cardPath = safeCardPath(workspaceDir, phase, cardId);
+      if (!fileExists(cardPath)) {
+        return res.status(404).json({ error: 'Card não encontrado' });
+      }
+      const cardContent = fs.readFileSync(cardPath, 'utf8');
+
+      // 2. Extrair título
+      let cardTitle = cardId.replace('.md', '');
+      const titleMatch = cardContent.match(/^#\s+(.+)$/m);
+      if (titleMatch) cardTitle = titleMatch[1].trim();
+
+      // 3. Pegar IDs do estado Backlog e Tech QA do Linear
+      const teamId = process.env.LINEAR_TEAM_ID || '';
+      let backlogStateId = '';
+      let techQaStateId = '';
+
+      if (teamId) {
+        try {
+          const teamData = await linearGraphQL(
+            `query ($teamId: String!) {
+              team(id: $teamId) { states { nodes { id name type } } }
+            }`,
+            { teamId }
+          );
+          const states = teamData.team.states.nodes;
+          const backlog = states.find(s => s.type === 'backlog' || s.name === 'Backlog' || s.name === 'Todo');
+          const techQa = states.find(s => s.name === 'Tech QA' || s.name === 'In Review');
+          if (backlog) backlogStateId = backlog.id;
+          if (techQa) techQaStateId = techQa.id;
+        } catch (err) {
+          console.warn('[prd-to-issues] Falha ao buscar estados do Linear:', err.message);
+        }
+      }
+
+      // 4. Chamar LLM (CTO Agent) para quebrar PRD em issues
+      const systemContext = buildSystemContext(workspaceDir);
+      const ctoIdentity = readFile(workspaceDir, '.ai/squads', 'cto.md');
+
+      const systemPrompt = `Você é o CTO Agent do Gigio Flow. Sua missão é analisar o PRD abaixo e quebrá-lo em issues atômicas e implementáveis seguindo a Session Atomicity Rule.
+
+REGRAS:
+- Cada issue deve ser implementável em UMA sessão de IA
+- Separe backend, frontend e QA em issues distintas
+- Máximo de 8 story points por issue
+- Cada issue deve ter 3-5 acceptance criteria testáveis
+- Identifique dependências entre issues
+
+Retorne APENAS um array JSON válido com a seguinte estrutura:
+[
+  {
+    "title": "[DEV] Título curto e acionável",
+    "description": "## Scope\\n\\n[1-2 frases]\\n\\n## Acceptance Criteria\\n- [ ] Critério 1\\n- [ ] Critério 2",
+    "squad": "DEV",
+    "priority": 2,
+    "estimate": 3,
+    "files": ["src/file1.js", "src/file2.js"],
+    "blockedBy": []
+  }
+]`;
+
+      const userPrompt = `${systemContext}
+
+---
+
+## 📋 PRD A SER QUEBRADO EM ISSUES:
+
+${cardContent}`;
+
+      const llmApiKey = apiKey || process.env.GIGIO_LLM_KEY || '';
+      const llmProvider = provider || process.env.GIGIO_LLM_PROVIDER || 'gemini';
+
+      const rawResponse = await callLLM({
+        provider: llmProvider,
+        apiKey: llmApiKey,
+        systemPrompt,
+        userPrompt
+      });
+
+      // 5. Parsear JSON da resposta
+      let issues;
+      try {
+        const jsonMatch = rawResponse.match(/```(?:json)?\s*([\s\S]*?)```/);
+        const jsonStr = jsonMatch ? jsonMatch[1] : rawResponse;
+        issues = JSON.parse(jsonStr.trim());
+        if (!Array.isArray(issues)) throw new Error('Resposta não é um array');
+      } catch (err) {
+        return res.status(500).json({
+          error: 'LLM retornou formato inválido',
+          rawResponse: rawResponse.substring(0, 500)
+        });
+      }
+
+      // 6. Criar cada issue no Linear
+      const created = [];
+      for (const issue of issues) {
+        try {
+          const data = await linearGraphQL(
+            `mutation ($input: IssueCreateInput!) {
+              issueCreate(input: $input) {
+                success
+                issue { id identifier title url }
+              }
+            }`,
+            {
+              input: {
+                title: issue.title,
+                description: issue.description,
+                teamId,
+                priority: issue.priority || 2,
+                estimate: issue.estimate || 3,
+                ...(backlogStateId ? { stateId: backlogStateId } : {}),
+              }
+            }
+          );
+
+          if (data.issueCreate.success) {
+            created.push(data.issueCreate.issue);
+          }
+        } catch (err) {
+          console.warn(`[prd-to-issues] Falha ao criar issue "${issue.title}":`, err.message);
+          created.push({ title: issue.title, error: err.message });
+        }
+      }
+
+      // 7. Anotar o card PRD com as issues criadas
+      const issueTable = created.map(i =>
+        `| ${i.identifier || 'ERRO'} | ${i.title} | ${i.url || i.error || 'Falha ao criar'} |`
+      ).join('\n');
+
+      const annotation = `\n\n---\n\n## 🔗 Issues no Linear\n\n| Issue | Título | URL |\n|-------|-------|-----|\n${issueTable}\n`;
+      fs.appendFileSync(cardPath, annotation, 'utf8');
+
+      // 8. Mover card de pendentes para em-progresso
+      try {
+        const currentPhase = phase;
+        const nextPhase = 'em-progresso';
+        const sourcePath = safeCardPath(workspaceDir, currentPhase, cardId);
+        const destPath = safeCardPath(workspaceDir, nextPhase, cardId);
+        const destDir = path.dirname(destPath);
+        if (!fs.existsSync(destDir)) {
+          fs.mkdirSync(destDir, { recursive: true });
+        }
+        fs.renameSync(sourcePath, destPath);
+      } catch (err) {
+        console.warn('[prd-to-issues] Falha ao mover card:', err.message);
+      }
+
+      res.json({
+        success: true,
+        cardTitle,
+        issues: created,
+        totalIssues: created.length
+      });
+
+    } catch (error) {
+      console.error('[prd-to-issues] Erro:', error);
       res.status(500).json({ error: error.message });
     }
   });

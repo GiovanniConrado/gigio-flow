@@ -1,0 +1,13 @@
+{
+  "source": ".ai/WORKFLOW_CONTRACT.md",
+  "description": "Map official Gigio Flow workflow statuses to the real Linear state IDs used by this workspace.",
+  "statuses": {
+    "Backlog": "",
+    "Todo": "",
+    "Desenvolvimento": "",
+    "QA-Tecnica": "",
+    "QA-Funcional": "",
+    "Concluido": "",
+    "Em-Producao": ""
+  }
+}

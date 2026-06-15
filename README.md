@@ -1,216 +1,119 @@
 # Gigio Flow
 
-**An open-source workspace protocol and local Studio for running Codex-powered AI squads across product discovery, technical planning, issue refinement, and delivery automation.**
+**Estrutura de workspace + AI Console para desenvolvimento orquestrado por IA.**
 
-![Tests](https://img.shields.io/badge/tests-25%20passed-brightgreen) ![License](https://img.shields.io/badge/license-MIT-blue) ![Node](https://img.shields.io/badge/node-%3E%3D20-green) ![React](https://img.shields.io/badge/react-19-blue)
+Um protocolo Markdown aberto que transforma seu projeto em um "SO ágil" onde agentes
+de IA (DeepSeek, Gemini, GPT, Opencode, Cursor) operam como squads persistentes com
+memória, regras e pipeline de entrega conectado ao Linear.
 
-Gigio Flow turns a Markdown workspace into a persistent operating system for AI-assisted product work. Instead of treating Codex or other coding agents as stateless chat sessions, it gives them durable project memory, squad roles, safety rules, product artifacts, and a delivery pipeline connected to Linear, GitHub, and Vercel.
+![Tests](https://img.shields.io/badge/tests-25%20passed-brightgreen)
+![License](https://img.shields.io/badge/license-MIT-blue)
+![Node](https://img.shields.io/badge/node-%3E%3D20-green)
 
-> Status: early open-source launch preparation. The local Studio is functional, while the Linear, GitHub, and Vercel delivery bridge is being productized.
+---
 
-![Gigio Flow Studio — Kanban board with AI squad pipeline](docs/studio-preview.png)
-
-## Why Gigio Flow Exists
-
-AI coding tools are powerful, but real software maintenance needs more than code generation. Maintainers need context, scope control, product reasoning, technical review, release discipline, and a clean handoff between humans and agents.
-
-Gigio Flow is built around one idea:
-
-**Codex should not work like a generic developer. It should operate inside a structured product squad.**
-
-That squad can include:
-
-- **CEO Agent** for strategic viability and product-market reasoning.
-- **PM Agent** for PRDs, acceptance criteria, UX copy, and issue slicing.
-- **CTO Agent** for architecture, API contracts, security, and technical risk.
-- **Dev Agent** for scoped implementation.
-- **QA Agent** for validation, accessibility, security, and release checks.
-- **Process Analyst** for workflow improvement and bottleneck detection.
-
-## What It Does
-
-- Stores product and technical knowledge in portable Markdown files.
-- Gives AI agents explicit squad roles, rules, templates, and rituals.
-- Converts discovery into product artifacts, then into small implementation issues.
-- Keeps a local workflow in `workflows/` while using Linear as the visual operational board.
-- Prepares delivery handoff to GitHub pull requests and Vercel deployments.
-- Preserves decisions, status, and project memory between AI sessions.
-
-## Core Concept
-
-Gigio Flow has two layers:
-
-### 1. Workspace Protocol
-
-The repository structure is the source of truth:
-
-```text
-.ai/          Agent squads, safety rules, skills, and templates
-knowledge/   Product vision, architecture, roadmap, state, history
-workflows/   Local Markdown cards for proposals, pending work, and active work
-boards/      Optional Obsidian boards
-dashboard/   Local Studio frontend and backend
-```
-
-### 2. Local Studio
-
-The Studio is a local web app that helps humans and agents operate the workspace:
-
-- project setup wizard
-- squad configuration
-- CEO/PM discovery flow
-- Kanban view backed by Markdown files
-- LLM refinement pipeline
-- Linear integration settings
-- health checks for the workspace
-
-The Studio is intentionally local-first. The Markdown files remain readable by humans, Git, Codex, Cursor, Claude Code, and other agentic tools.
-
-## Delivery Model
-
-Gigio Flow does not try to replace Linear, GitHub, or Vercel. It controls the product and agent context around them.
-
-```mermaid
-flowchart LR
-  A[Discovery] --> B[Product Artifact]
-  B --> C[Issue Refinement]
-  C --> D[Linear Issue]
-  D --> E[GitHub Branch or PR]
-  E --> F[Vercel Preview]
-  F --> G[Release Notes and Knowledge Update]
-```
-
-- **Linear** is the visual operational board.
-- **GitHub** is the code and pull request layer.
-- **Vercel** is the deployment and preview layer.
-- **Gigio Flow** is the product memory, agent protocol, and delivery orchestration layer.
-
-## Quickstart
-
-### Requirements
-
-- Node.js 20+
-- npm
-- A local clone of this repository
-
-### Run the Studio
-
-**Option A — from the repository root:**
+## Quick Start
 
 ```bash
-npm run install:all
+# 1. Instalar dependências
+cd dashboard
+npm install
+
+# 2. Iniciar o Studio (frontend + backend)
 npm run studio
+# → Frontend: http://localhost:5173
+# → Backend:  http://localhost:3001
 ```
 
-**Option B — from the dashboard directory:**
+---
 
-```bash
-cd dashboard
-npm install
-npm run dev
+## Componentes
+
+| Componente | O que faz | Como acessa |
+|---|---|---|
+| **Studio** (`dashboard/`) | Console de Conhecimento + IA. Gerencia knowledge base, refine/estimate/QA, diagnóstico e bootstrap. | `http://localhost:5173` |
+| **MCP Linear** (`dashboard/mcp-linear.js`) | Ponte direta entre IA e Linear. Agentes criam/atualizam/consultam issues via MCP. | Qualquer IDE com MCP |
+| **Skills** (`.ai/skills/`) | Instruções operacionais para agentes em qualquer etapa do pipeline. | Lido pelo agente na sessão |
+| **Linear** | Fonte da verdade operacional (colunas: Backlog → Dev → Tech QA → Human QA → Done). | `linear.app` |
+
+---
+
+## Pipeline
+
+```
+PRD em propostas/
+   ↓
+[Studio] Refinar PRD + Estimar
+   ↓
+▼ GATE 1: Humano aprova escopo
+   ↓
+[Agente via MCP] PRD → Issues no Linear
+   │  Usa: .ai/skills/prd-to-linear.md
+   ↓
+[Agente via MCP] Dev implementa cada issue
+   │  Usa: .ai/skills/dev-cycle.md
+   │  Commita com "GIG-42: ..."
+   ↓
+[Studio] QA Técnico (LLM)
+   ↓
+▼ GATE 2: Humano aprova QA final
+   ↓
+Deploy para desenvolvimento
+   ↓
+[Agente via MCP] Retrospectiva
+   │  Usa: .ai/skills/retrospective.md
+   │  Skills se auto-modificam para melhorar
 ```
 
-Open:
+---
 
-- Studio frontend: `http://localhost:5173`
-- Local API: `http://localhost:3001`
+## Studio — Navegação
 
-### Configure Environment
+| Aba | Função |
+|---|---|
+| **📊 Overview** | Health do workspace + ações rápidas + visão do pipeline |
+| **🧠 Knowledge** | Editor visual dos 7 knowledge files (VISAO, ARQUITETURA, ESTADO_ATUAL...) |
+| **🤖 AI Console** | CEO Chat, Refinar PRD, Estimar, QA Técnico (tudo num lugar) |
+| **⚙️ Config** | Squads, gates de aprovação, integração com Linear |
+| **📡 Diagnostics** | Health check, bootstrap de projetos, correção de placeholders |
 
-Copy the example file:
+---
 
-```bash
-cp dashboard/.env.example dashboard/.env
+## Para Agentes de IA
+
+Leia o arquivo [`AGENTS.md`](AGENTS.md) — ele contém:
+
+- Estrutura completa do workspace
+- Pipeline de entrega detalhado
+- Personas dos squads (CEO, PM, CTO, Dev, QA, Process Analyst)
+- Regras imutáveis (segurança, design, deploy)
+- Skills disponíveis e quando usar cada um
+- Ferramentas MCP do Linear
+- Rituais de início e fim de sessão
+
+---
+
+## Estrutura do Projeto
+
+```
+gigio-flow/
+├── .ai/                    ← Squads, regras, skills, templates
+├── .opencode/              ← Config MCP do Linear
+├── knowledge/              ← Knowledge base (VISAO, ARQUITETURA, ...)
+├── dashboard/              ← Studio (React + Express)
+│   ├── server.js           ← API REST
+│   ├── mcp-linear.js       ← MCP Server para Linear
+│   ├── routes/             ← Rotas da API
+│   ├── services/           ← Serviços (llm.js, files.js)
+│   └── src/                ← Frontend React
+├── workflows/              ← Cards físicos
+│   ├── propostas/          ← PRDs brutos
+│   └── pendentes/          ← PRDs refinados + aprovados
+└── docs/                   ← Guias e documentação
 ```
 
-API keys are optional for local exploration. LLM keys should stay local and must not be committed.
+---
 
-## Codex-First Workflow
+## Licença
 
-A typical Gigio Flow session with Codex:
-
-1. Read `AGENTS.md`, `knowledge/ESTADO_ATUAL.md`, and active workflow cards.
-2. Select the right squad role for the task.
-3. Convert a raw idea into a product artifact.
-4. Refine the artifact into a small, testable issue.
-5. Estimate complexity and identify technical risk.
-6. Create or update a Linear issue.
-7. Implement through GitHub.
-8. Verify the Vercel preview.
-9. Update `knowledge/ESTADO_ATUAL.md` and `knowledge/HISTORICO.md`.
-
-More detail: [Codex Workflows](docs/CODEX_WORKFLOWS.md).
-
-## Demo Script
-
-Use the public demo script to show the project in a few minutes:
-
-1. create a raw product idea
-2. turn it into a PRD
-3. refine it into a small issue
-4. send it to Linear
-5. connect implementation to GitHub
-6. validate the Vercel preview
-7. update project memory
-
-See [Demo Script](docs/DEMO_SCRIPT.md).
-
-## Extending the Squad
-
-Gigio Flow is designed to be extended with new agent personas. You can add specialists such as a Security Auditor, Data Analyst, Accessibility Reviewer, or any other domain expert that your team needs.
-
-See the full guide: [Adding New Agents](docs/ADDING_NEW_AGENTS.md)
-
-## Open Source Roadmap
-
-The public roadmap is focused on making Gigio Flow useful for real maintainers:
-
-- Codex-first documentation and examples
-- Linear issue creation and webhook sync
-- GitHub branch, PR, and changelog handoff
-- Vercel preview/deployment status sync
-- stricter security checks for local file operations
-- reusable templates for product and technical artifacts
-
-See [Roadmap](ROADMAP.md).
-
-## Repository Health & Testing
-
-The repository has a comprehensive suite of 25 automated unit and integration tests covering physical file security (Path Traversal protection), local Kanban workflows, LLM pipeline mock simulations, and Linear GraphQL integrations.
-
-Before opening a pull request:
-
-```bash
-cd dashboard
-npm install
-npm run test
-npm run lint
-npm run build
-```
-
-## Security
-
-Gigio Flow is local-first, but it can handle API tokens for LLMs, Linear, GitHub, and Vercel. Never commit `.env`, local config files, or private keys.
-
-See [Security Policy](SECURITY.md).
-
-## Contributing
-
-Contributions are welcome. The best first contributions are:
-
-- documentation improvements
-- Codex workflow examples
-- Linear/GitHub/Vercel integration hardening
-- security review
-- issue templates and product artifact templates
-- **new agent personas** — see [Adding New Agents](docs/ADDING_NEW_AGENTS.md)
-
-See [Contributing Guide](CONTRIBUTING.md).
-
-## Changelog
-
-See [CHANGELOG.md](CHANGELOG.md) for a full history of releases.
-
-## License
-
-MIT. See [LICENSE](LICENSE).
+MIT

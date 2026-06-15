@@ -12,7 +12,7 @@ Planned responsibilities:
 - set team, project, priority, labels, and issue type
 - include acceptance criteria and technical notes
 - link back to the source artifact
-- receive webhook events when issues move to Done
+- receive webhook events when issues move to `Concluido`
 - update `knowledge/ESTADO_ATUAL.md`
 - move completed cards to `.ai/history/concluidos/`
 

@@ -2,6 +2,8 @@
 
 > This skill teaches AI agents to autonomously update the project's state and knowledge base after each delivery, ensuring the repository is self-documented.
 
+> Canonical session close and archival rules live in `.ai/WORKFLOW_CONTRACT.md`. Follow the contract first if instructions diverge.
+
 ---
 
 ## 🧠 The Philosophy of Self-Evolution
@@ -35,7 +37,7 @@ Immediately after receiving the final validation (APPROVED) from the QA Agent fo
     ```
 
 ### Step 3: Record and Archive the completed task locally
--   Move the corresponding task markdown file from `workflows/em-progresso/` to the `.ai/history/concluidos/` folder (or create the folder if it does not exist).
+-   Move or archive the corresponding local task markdown file into `.ai/history/concluidos/` when the cycle is really closed. Active execution should already be reflected in Linear, not in `workflows/em-progresso/`.
 -   Add a special section at the end of the markdown file called `## Execution Result` detailing:
     -   Commits generated (hashes and messages).
     -   Evidence of static and manual tests run by QA.

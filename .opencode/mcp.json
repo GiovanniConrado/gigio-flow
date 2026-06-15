@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "linear": {
+      "command": "node",
+      "args": ["dashboard/mcp-linear.js"],
+      "env": {
+        "LINEAR_API_KEY": "${LINEAR_API_KEY}",
+        "LINEAR_TEAM_ID": "${LINEAR_TEAM_ID}"
+      }
+    }
+  }
+}

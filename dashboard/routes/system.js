@@ -684,5 +684,492 @@ graph TD
     }
   });
 
+  // ── POST /api/project/bootstrap ─────────────────────────────────────────
+  // Mapeia um projeto existente e cria workspace Gigio Flow
+  router.post('/project/bootstrap', (req, res) => {
+    try {
+      const { projectPath, name } = req.body;
+
+      if (!projectPath) {
+        return res.status(400).json({ error: 'projectPath é obrigatório' });
+      }
+
+      const resolvedPath = path.resolve(projectPath);
+
+      if (!fs.existsSync(resolvedPath)) {
+        return res.status(404).json({ error: 'Caminho não encontrado' });
+      }
+
+      // 1. Detectar se já é um workspace Gigio Flow
+      const isAlreadyWorkspace = fs.existsSync(path.join(resolvedPath, '.ai')) &&
+        fs.existsSync(path.join(resolvedPath, 'knowledge'));
+
+      // 2. Detectar tech stack
+      const detection = { stack: 'unknown', framework: '', database: '', testing: '', build: '', dev: '' };
+
+      if (fs.existsSync(path.join(resolvedPath, 'package.json'))) {
+        try {
+          const pkg = JSON.parse(fs.readFileSync(path.join(resolvedPath, 'package.json'), 'utf8'));
+          const deps = { ...pkg.dependencies, ...pkg.devDependencies };
+
+          detection.stack = 'Node.js';
+          if (deps.react || deps['react-dom']) detection.framework = 'React';
+          else if (deps.next) detection.framework = 'Next.js';
+          else if (deps.vue) detection.framework = 'Vue';
+          else if (deps.express) detection.framework = 'Express';
+          else detection.framework = Object.keys(deps).slice(0, 3).join(', ');
+
+          detection.build = pkg.scripts?.build || 'N/A';
+          detection.dev = pkg.scripts?.dev || 'N/A';
+          detection.testing = pkg.scripts?.test || 'N/A';
+
+          if (deps.typescript || deps['@types/react']) detection.stack = 'TypeScript';
+          if (deps.prisma || deps['typeorm']) detection.database = 'PostgreSQL (via ORM)';
+          else if (deps.mongoose) detection.database = 'MongoDB';
+          else if (deps.pg) detection.database = 'PostgreSQL';
+
+          detection.name = pkg.name || name || path.basename(resolvedPath);
+        } catch {}
+      } else if (fs.existsSync(path.join(resolvedPath, 'requirements.txt'))) {
+        detection.stack = 'Python';
+        const reqTxt = fs.readFileSync(path.join(resolvedPath, 'requirements.txt'), 'utf8');
+        if (reqTxt.includes('django')) detection.framework = 'Django';
+        else if (reqTxt.includes('flask')) detection.framework = 'Flask';
+        else if (reqTxt.includes('fastapi')) detection.framework = 'FastAPI';
+        detection.name = name || path.basename(resolvedPath);
+      } else if (fs.existsSync(path.join(resolvedPath, 'Cargo.toml'))) {
+        detection.stack = 'Rust';
+        detection.name = name || path.basename(resolvedPath);
+      } else if (fs.existsSync(path.join(resolvedPath, 'go.mod'))) {
+        detection.stack = 'Go';
+        detection.name = name || path.basename(resolvedPath);
+      } else {
+        detection.name = name || path.basename(resolvedPath);
+      }
+
+      // 3. Scan directory (top 2 levels) — collect structure
+      let structure = '';
+      try {
+        const entries = fs.readdirSync(resolvedPath).filter(e =>
+          !e.startsWith('.') && e !== 'node_modules' && e !== 'dist' && e !== 'build' && e !== 'target'
+        );
+        structure = entries.map(e => {
+          const full = path.join(resolvedPath, e);
+          if (fs.statSync(full).isDirectory()) {
+            const sub = fs.readdirSync(full).filter(s =>
+              !s.startsWith('.') && s !== 'node_modules'
+            ).slice(0, 8).map(s => `  ├── ${s}`).join('\n');
+            return `├── ${e}/\n${sub}`;
+          }
+          return `├── ${e}`;
+        }).join('\n');
+      } catch {}
+
+      // 4. Se não é workspace, criar estrutura
+      if (!isAlreadyWorkspace) {
+        // Criar diretórios
+        const dirs = [
+          '.ai/squads', '.ai/rules', '.ai/skills', '.ai/templates', '.ai/history/concluidos',
+          'knowledge', 'workflows/propostas', 'workflows/pendentes'
+        ];
+        dirs.forEach(d => {
+          const full = path.join(resolvedPath, d);
+          if (!fs.existsSync(full)) fs.mkdirSync(full, { recursive: true });
+        });
+
+        // Copiar templates do workspace default
+        const sourceDir = state.activeWorkspaceDir;
+        const copyIfMissing = (relDir) => {
+          const srcDir = path.join(sourceDir, relDir);
+          const dstDir = path.join(resolvedPath, relDir);
+          if (fs.existsSync(srcDir)) {
+            fs.readdirSync(srcDir).filter(f => f.endsWith('.md')).forEach(f => {
+              const dst = path.join(dstDir, f);
+              if (!fs.existsSync(dst)) {
+                fs.copyFileSync(path.join(srcDir, f), dst);
+              }
+            });
+          }
+        };
+        copyIfMissing('.ai/squads');
+        copyIfMissing('.ai/rules');
+        copyIfMissing('.ai/skills');
+        copyIfMissing('.ai/templates');
+      }
+
+      // 5. Gerar knowledge/ARQUITETURA.md (se não existir ou for template)
+      const arquiPath = path.join(resolvedPath, 'knowledge', 'ARQUITETURA.md');
+      if (!fs.existsSync(arquiPath) || fs.readFileSync(arquiPath, 'utf8').includes('{{NOME_DO_PROJETO}}')) {
+        const arquiContent = `# Technical Architecture — ${detection.name}
+
+> Auto-generated by Gigio Flow Bootstrap on ${new Date().toISOString().split('T')[0]}
+
+---
+
+## 🛠️ Technology Stack
+
+| Layer | Technology |
+|-------|------------|
+| **Language / Stack** | ${detection.stack} |
+| **Framework** | ${detection.framework || 'N/A'} |
+| **Database** | ${detection.database || 'N/A'} |
+| **Testing** | ${detection.testing || 'N/A'} |
+
+## 📁 Project Structure
+
+\`\`\`
+${structure}
+\`\`\`
+
+## 🚀 Commands
+
+| Command | Script |
+|---------|--------|
+| dev | \`${detection.dev || 'N/A'}\` |
+| build | \`${detection.build || 'N/A'}\` |
+| test | \`${detection.testing || 'N/A'}\` |
+`;
+        fs.writeFileSync(arquiPath, arquiContent, 'utf8');
+      }
+
+      // 6. Gerar knowledge/ESTADO_ATUAL.md (se não existir)
+      const estadoPath = path.join(resolvedPath, 'knowledge', 'ESTADO_ATUAL.md');
+      if (!fs.existsSync(estadoPath)) {
+        const estadoContent = `# Current Project State — ${detection.name}
+
+> **Last Update:** ${new Date().toISOString().split('T')[0]}
+> **Status:** ⏳ Initialized via Bootstrap
+
+## Modules
+
+| Module | Status | Notes |
+|--------|--------|-------|
+| **${detection.name}** | ⏳ Pending | Project initialized by Gigio Flow Bootstrap |
+`;
+        fs.writeFileSync(estadoPath, estadoContent, 'utf8');
+      }
+
+      // 7. Gerar knowledge/VISAO.md placeholder (se não existir)
+      const visaoPath = path.join(resolvedPath, 'knowledge', 'VISAO.md');
+      if (!fs.existsSync(visaoPath)) {
+        const visaoContent = `# Product Vision & Business Model — ${detection.name}
+
+> **Auto-generated by Gigio Flow Bootstrap**
+> **Please fill in the sections below with your project's business context.**
+
+---
+
+## 🎯 1. Mission & Purpose
+
+- **The Mission:** [What problem does this solve?]
+- **Customer Pain:** [Who is suffering and why?]
+- **Proposed Solution:** [How does this fix it?]
+
+---
+
+## 📊 2. Business Model
+
+- **Target Audience:** [Who pays?]
+- **Monetization:** [How does it make money?]
+- **Acquisition:** [How do users find it?]
+`;
+        fs.writeFileSync(visaoPath, visaoContent, 'utf8');
+      }
+
+      // 8. Gerar knowledge/HISTORICO.md (se não existir)
+      const historicoPath = path.join(resolvedPath, 'knowledge', 'HISTORICO.md');
+      if (!fs.existsSync(historicoPath)) {
+        const historicoContent = `# Decision History — ${detection.name}
+
+> Auto-generated by Gigio Flow Bootstrap
+
+---
+
+### [${new Date().toISOString().split('T')[0]}] — Project Initialized
+
+- **What changed:** Project mapped by Gigio Flow Bootstrap
+- **Stack detected:** ${detection.stack} ${detection.framework ? `/ ${detection.framework}` : ''}
+- **Status:** Ready for first PRD
+`;
+        fs.writeFileSync(historicoPath, historicoContent, 'utf8');
+      }
+
+      // 9. Registrar nos projetos
+      const projectsList = loadProjects();
+      const existingIdx = projectsList.findIndex(p => p.path === resolvedPath);
+      if (existingIdx === -1) {
+        projectsList.push({
+          id: 'proj-' + Date.now(),
+          name: detection.name,
+          path: resolvedPath,
+          active: false
+        });
+        saveProjects(projectsList);
+      }
+
+      res.json({
+        success: true,
+        project: {
+          name: detection.name,
+          path: resolvedPath,
+          isNewWorkspace: !isAlreadyWorkspace
+        },
+        detection: {
+          stack: detection.stack,
+          framework: detection.framework || null,
+          database: detection.database || null,
+          dev: detection.dev || null,
+          build: detection.build || null,
+          test: detection.testing || null
+        },
+        totalFiles: fs.readdirSync(resolvedPath).length
+      });
+
+    } catch (error) {
+      console.error('[Bootstrap] Erro:', error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // ── GET /api/knowledge ─────────────────────────────────────────────────
+  // Lista todos os arquivos de knowledge com seus conteúdos
+  router.get('/knowledge', (req, res) => {
+    try {
+      const workspaceDir = state.activeWorkspaceDir;
+      const knowledgeDir = path.join(workspaceDir, 'knowledge');
+      const aiDir = path.join(workspaceDir, '.ai', 'rules');
+
+      if (!fs.existsSync(knowledgeDir)) {
+        return res.json({ files: [] });
+      }
+
+      const knowledgeFiles = [
+        { id: 'visao',           label: 'VISAO.md',          path: path.join(knowledgeDir, 'VISAO.md'),        dir: 'knowledge' },
+        { id: 'arquitetura',     label: 'ARQUITETURA.md',    path: path.join(knowledgeDir, 'ARQUITETURA.md'),  dir: 'knowledge' },
+        { id: 'estado-atual',    label: 'ESTADO_ATUAL.md',   path: path.join(knowledgeDir, 'ESTADO_ATUAL.md'), dir: 'knowledge' },
+        { id: 'roadmap',         label: 'ROADMAP.md',        path: path.join(knowledgeDir, 'ROADMAP.md'),      dir: 'knowledge' },
+        { id: 'historico',       label: 'HISTORICO.md',      path: path.join(knowledgeDir, 'HISTORICO.md'),    dir: 'knowledge' },
+        { id: 'glossario',       label: 'GLOSSARIO.md',      path: path.join(knowledgeDir, 'GLOSSARIO.md'),    dir: 'knowledge' },
+        { id: 'design-system',   label: 'DESIGN_SYSTEM.md',  path: path.join(knowledgeDir, 'DESIGN_SYSTEM.md'),dir: 'knowledge' },
+      ];
+
+      const files = knowledgeFiles.map(f => {
+        let content = '';
+        let exists = false;
+        if (fs.existsSync(f.path)) {
+          content = fs.readFileSync(f.path, 'utf8');
+          exists = true;
+        }
+        return {
+          id: f.id,
+          label: f.label,
+          exists,
+          content: content.substring(0, 10000),  // limit to 10k chars for UI
+          size: content.length,
+          isTemplate: content.includes('{{NOME_DO_PROJETO}}') || content.includes('[Descreva')
+        };
+      });
+
+      res.json({ files, activeWorkspaceDir: workspaceDir });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // ── POST /api/knowledge/save ──────────────────────────────────────────
+  // Salva o conteúdo de um knowledge file
+  router.post('/knowledge/save', (req, res) => {
+    try {
+      const workspaceDir = state.activeWorkspaceDir;
+      const { fileId, content } = req.body;
+
+      if (!fileId || content === undefined) {
+        return res.status(400).json({ error: 'fileId e content são obrigatórios' });
+      }
+
+      const fileMap = {
+        'visao':           { dir: 'knowledge', name: 'VISAO.md' },
+        'arquitetura':     { dir: 'knowledge', name: 'ARQUITETURA.md' },
+        'estado-atual':    { dir: 'knowledge', name: 'ESTADO_ATUAL.md' },
+        'roadmap':         { dir: 'knowledge', name: 'ROADMAP.md' },
+        'historico':       { dir: 'knowledge', name: 'HISTORICO.md' },
+        'glossario':       { dir: 'knowledge', name: 'GLOSSARIO.md' },
+        'design-system':   { dir: 'knowledge', name: 'DESIGN_SYSTEM.md' },
+      };
+
+      const file = fileMap[fileId];
+      if (!file) {
+        return res.status(400).json({ error: `Arquivo desconhecido: ${fileId}` });
+      }
+
+      writeFile(workspaceDir, file.dir, file.name, content);
+
+      res.json({ success: true, fileId, size: content.length });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // ── GET /api/workspace/status ─────────────────────────────────────────
+  // Status detalhado de todos os arquivos do workspace
+  router.get('/workspace/status', (req, res) => {
+    try {
+      const wd = state.activeWorkspaceDir;
+      const safeRead = (relPath, max = 50000) => {
+        const full = path.join(wd, relPath);
+        if (!fs.existsSync(full)) return '';
+        const stat = fs.statSync(full);
+        if (!stat.isFile() || stat.size > max) return '';
+        return fs.readFileSync(full, 'utf8');
+      };
+
+      const includesText = (relPath, text) => safeRead(relPath).includes(text);
+
+      const scanDir = (relDir) => {
+        const full = path.join(wd, relDir);
+        if (!fs.existsSync(full)) return { exists: false, files: [] };
+        const entries = fs.readdirSync(full).map(f => {
+          const fPath = path.join(full, f);
+          const stat = fs.statSync(fPath);
+          let isTemplate = false;
+          let content = '';
+          if (f.endsWith('.md') && stat.size < 50000) {
+            content = fs.readFileSync(fPath, 'utf8').substring(0, 2000);
+            isTemplate = content.includes('{{NOME_DO_PROJETO}}') || content.includes('[Descreva') || content.includes('[Qual');
+          }
+          return {
+            name: f,
+            path: `${relDir}/${f}`,
+            size: stat.size,
+            isDirectory: stat.isDirectory(),
+            isMarkdown: f.endsWith('.md'),
+            isTemplate,
+            isEmpty: stat.size === 0,
+            hasContent: stat.size > 50,
+          };
+        });
+        return { exists: true, files: entries };
+      };
+
+      const workspaceStatus = {
+        activePath: wd,
+        ai: {
+          squads: scanDir('.ai/squads'),
+          rules: scanDir('.ai/rules'),
+          skills: scanDir('.ai/skills'),
+          templates: scanDir('.ai/templates'),
+          history: scanDir('.ai/history/concluidos'),
+        },
+        knowledge: scanDir('knowledge'),
+        workflows: {
+          propostas: scanDir('workflows/propostas'),
+          pendentes: scanDir('workflows/pendentes'),
+        },
+        llm: {
+          hasApiKey: !!(process.env.GIGIO_LLM_KEY || ''),
+          configuredInLocalStorage: true, // frontend checks this
+        },
+        linear: {
+          hasApiKey: !!(process.env.LINEAR_API_KEY || ''),
+          hasTeamId: !!(process.env.LINEAR_TEAM_ID || ''),
+        },
+      };
+
+      const contractPath = '.ai/WORKFLOW_CONTRACT.md';
+      const evidenceTemplatePath = '.ai/templates/evidence-comment.md';
+      const statusMapPath = '.ai/linear-status-map.json';
+      const docsToCheck = [
+        'AGENTS.md',
+        '.ai/squads/dev.md',
+        '.ai/skills/auto-evolucao.md',
+        '.ai/skills/dev-cycle.md',
+        '.ai/skills/prd-to-linear.md',
+        '.ai/skills/retrospective.md',
+        'docs/WALKTHROUGH_GUIDE.md',
+        'docs/CODEX_WORKFLOWS.md',
+      ];
+
+      let statusMap = null;
+      try {
+        const rawStatusMap = safeRead(statusMapPath);
+        statusMap = rawStatusMap ? JSON.parse(rawStatusMap) : null;
+      } catch {
+        statusMap = null;
+      }
+
+      const officialStatuses = [
+        'Backlog',
+        'Todo',
+        'Desenvolvimento',
+        'QA-Tecnica',
+        'QA-Funcional',
+        'Concluido',
+        'Em-Producao',
+      ];
+
+      const mappedStatuses = officialStatuses.filter(statusName => {
+        const value = statusMap?.statuses?.[statusName];
+        return typeof value === 'string' && value.trim().length > 0;
+      });
+
+      const contractRefs = docsToCheck
+        .filter(relPath => includesText(relPath, '.ai/WORKFLOW_CONTRACT.md'));
+
+      const legacyReferences = docsToCheck
+        .filter(relPath => includesText(relPath, 'workflows/em-progresso/'));
+
+      workspaceStatus.operational = {
+        contract: {
+          exists: fs.existsSync(path.join(wd, contractPath)),
+          referencedBy: contractRefs,
+          expectedReferences: docsToCheck.length,
+        },
+        evidenceTemplate: {
+          exists: fs.existsSync(path.join(wd, evidenceTemplatePath)),
+        },
+        linearStatusMap: {
+          exists: fs.existsSync(path.join(wd, statusMapPath)),
+          mapped: mappedStatuses,
+          missing: officialStatuses.filter(statusName => !mappedStatuses.includes(statusName)),
+        },
+        drift: {
+          legacyReferences,
+        },
+      };
+
+      // Calcular scores a partir do workspace real
+      const requiredGroups = [
+        workspaceStatus.knowledge.files,
+        workspaceStatus.ai.rules.files,
+        workspaceStatus.ai.squads.files,
+        workspaceStatus.ai.skills.files,
+      ];
+      const totalRequired = requiredGroups.reduce((sum, files) => sum + files.length, 0);
+      let completed = 0;
+      workspaceStatus.knowledge.files.forEach(f => { if (!f.isTemplate && f.hasContent) completed++; });
+      workspaceStatus.ai.rules.files.forEach(f => { if (f.hasContent) completed++; });
+      workspaceStatus.ai.squads.files.forEach(f => { if (f.hasContent) completed++; });
+      workspaceStatus.ai.skills.files.forEach(f => { if (f.hasContent) completed++; });
+
+      workspaceStatus.score = totalRequired > 0 ? Math.round((completed / totalRequired) * 100) : 0;
+      const operationalChecks = [
+        workspaceStatus.operational.contract.exists,
+        workspaceStatus.operational.evidenceTemplate.exists,
+        workspaceStatus.operational.contract.referencedBy.length === workspaceStatus.operational.contract.expectedReferences,
+        workspaceStatus.operational.drift.legacyReferences.length === 0,
+        workspaceStatus.operational.linearStatusMap.exists,
+      ];
+      const operationalPassed = operationalChecks.filter(Boolean).length;
+      workspaceStatus.operational.score = Math.round((operationalPassed / operationalChecks.length) * 100);
+      workspaceStatus.isFullyConfigured = workspaceStatus.score >= 80 &&
+        workspaceStatus.linear.hasApiKey &&
+        workspaceStatus.operational.score >= 80;
+
+      res.json(workspaceStatus);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   return router;
 }
